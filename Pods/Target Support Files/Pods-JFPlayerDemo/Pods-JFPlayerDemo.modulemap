@@ -1,0 +1,6 @@
+framework module Pods_JFPlayerDemo {
+  umbrella header "Pods-JFPlayerDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}
