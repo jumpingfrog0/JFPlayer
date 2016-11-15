@@ -21,6 +21,7 @@ class JFPlayer: UIView {
         return UIApplication.shared.statusBarOrientation.isLandscape
     }
     
+    /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
     
     // MARK: - Initialize
@@ -44,12 +45,13 @@ class JFPlayer: UIView {
         super.layoutSubviews()
         
         if !sizeRatioDetected {
-//            detectSizeRatio()
+            detectSizeRatio()
             sizeRatioDetected = true
         }
     }
     
     // MARK: - Setup
+    
     func initUI() {
         backgroundColor = UIColor.black
         
@@ -60,8 +62,8 @@ class JFPlayer: UIView {
         controlView.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
-     
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
+        controlView.updateUI(isForFullScreen: false)
+        
     }
     
     func preparePlayer() {
@@ -71,8 +73,12 @@ class JFPlayer: UIView {
         playerLayer.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
     }
     
+    
+    /// Using for avoiding bugs in full screen mode
     fileprivate func detectSizeRatio() {
         let expectedHeight = UIScreen.main.bounds.width * (UIScreen.main.bounds.width / UIScreen.main.bounds.height)
         if fabs(bounds.height - expectedHeight) < 0.25 {
@@ -86,12 +92,14 @@ class JFPlayer: UIView {
     func deviceOrientationDidChange() {
         
         setNeedsLayout()
+        controlView.updateUI(isForFullScreen: isFullScreen)
     }
 
     // MARK: - Public Methods
     
     func playWithUrl(_ url: URL, title: String = "") {
         playerLayer.videoUrl = url
+        controlView.titleLabel.text = title
         playerLayer.configurePlayer()
         playerLayer.play()
     }

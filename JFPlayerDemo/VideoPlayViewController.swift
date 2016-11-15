@@ -72,12 +72,4 @@ class VideoPlayViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
-    
-//    override var shouldAutorotate: Bool {
-//        return true
-//    }
-//    
-//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-//        return .all
-//    }
 }
