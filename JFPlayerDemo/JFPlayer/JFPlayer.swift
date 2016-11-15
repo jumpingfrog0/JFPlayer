@@ -21,7 +21,7 @@ class JFPlayer: UIView {
         return UIApplication.shared.statusBarOrientation.isLandscape
     }
     
-    var originBounds: CGRect?
+    fileprivate var sizeRatioDetected = false
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -36,8 +36,6 @@ class JFPlayer: UIView {
         preparePlayer()
     }
     
-//    convenience init(cu)
-    
     convenience init() {
         self.init(frame: CGRect.zero)
     }
@@ -45,31 +43,9 @@ class JFPlayer: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if isFullScreen {
-            
-            if originBounds == nil {
-                originBounds = bounds
-            }
-            
-            self.snp.remakeConstraints({ (make) in
-                make.left.equalTo(superview!).offset(0)
-                make.top.equalTo(superview!).offset(0)
-                make.width.equalTo(UIScreen.main.bounds.width)
-                make.height.equalTo(UIScreen.main.bounds.height)
-            })
-            
-            UIApplication.shared.isStatusBarHidden = false
-            
-        } else {
-            
-            if let width = originBounds?.width, let height = originBounds?.height {
-                self.snp.remakeConstraints({ (make) in
-                    make.left.equalTo(superview!).offset(0)
-                    make.top.equalTo(superview!).offset(0)
-                    make.width.equalTo(width)
-                    make.height.equalTo(height)
-                })
-            }
+        if !sizeRatioDetected {
+//            detectSizeRatio()
+            sizeRatioDetected = true
         }
     }
     
@@ -94,6 +70,16 @@ class JFPlayer: UIView {
         insertSubview(playerLayer, at: 0)
         playerLayer.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
+        }
+    }
+    
+    fileprivate func detectSizeRatio() {
+        let expectedHeight = UIScreen.main.bounds.width * (UIScreen.main.bounds.width / UIScreen.main.bounds.height)
+        if fabs(bounds.height - expectedHeight) < 0.25 {
+            // The size proportion in line with expectations, do nothing
+        } else {
+            // The size is not in conformity with the expected rate
+            assert(false, "The size is not in conformity with the expected rate, please set the size of JFPlayer to (UIScreen.main.bounds.width, UIScreen.main.bounds.height)")
         }
     }
     

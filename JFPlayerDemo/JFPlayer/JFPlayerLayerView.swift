@@ -31,10 +31,9 @@ class JFPlayerLayerView: UIView {
             playerItem = AVPlayerItem(url: url)
             player = AVPlayer(playerItem: playerItem)
             playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.videoGravity = AVLayerVideoGravityResizeAspect
             
             layer.insertSublayer(playerLayer!, at: 0)
-            setNeedsLayout()
-            layoutIfNeeded()
         }
     }
     
@@ -48,6 +47,10 @@ class JFPlayerLayerView: UIView {
         super.layoutSubviews()
         
         playerLayer?.frame = bounds
+    }
+    
+    func updateUI() {
+        setNeedsLayout()
     }
 
     // MARK: - Actions

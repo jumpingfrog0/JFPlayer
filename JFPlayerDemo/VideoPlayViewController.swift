@@ -24,12 +24,13 @@ class VideoPlayViewController: UIViewController {
         player = JFPlayer()
         view.addSubview(player)
         
+        // push入这个控制器的上一个控制器必须只支持竖屏，不然在手机横着时，push入这个控制器时视频的尺寸有问题。
         player.snp.makeConstraints { (make) in
             make.top.equalTo(view.snp.top)
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
+            make.height.equalTo(view.snp.width).multipliedBy(UIScreen.main.bounds.width/UIScreen.main.bounds.height)
 //            make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
-            make.height.equalTo(100)
         }
         
         let bottomView = UIView()
@@ -55,6 +56,7 @@ class VideoPlayViewController: UIViewController {
     
     func playResource() {
         let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
+//        let url = URL(string: "http://baobab.wdjcdn.com/14571455324031.mp4")
         player.playWithUrl(url!, title: "至尊宝")
     }
     
@@ -70,4 +72,12 @@ class VideoPlayViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
+    
+//    override var shouldAutorotate: Bool {
+//        return true
+//    }
+//    
+//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+//        return .all
+//    }
 }
