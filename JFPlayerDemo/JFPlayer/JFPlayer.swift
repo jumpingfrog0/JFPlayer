@@ -20,6 +20,7 @@ class JFPlayer: UIView {
     var isFullScreen: Bool {
         return UIApplication.shared.statusBarOrientation.isLandscape
     }
+    var statusBarIsHidden = false
     
     /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
@@ -28,12 +29,14 @@ class JFPlayer: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         initUI()
+        addActionListener()
         preparePlayer()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initUI()
+        addActionListener()
         preparePlayer()
     }
     
@@ -63,7 +66,17 @@ class JFPlayer: UIView {
             make.edges.equalTo(self)
         }
         controlView.updateUI(isForFullScreen: false)
+    }
+    
+    func addActionListener() {
+        controlView.playButton.addTarget(self, action: #selector(playButtonPressed(_:)), for: .touchUpInside)
+        controlView.fullScreenButton.addTarget(self, action: #selector(fullScreenButtonPressed(_:)), for: .touchUpInside)
+        controlView.backButton.addTarget(self, action: #selector(backButtonPressed(_:)), for: .touchUpInside)
+        controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
+        controlView.timeSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
+        controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
         
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
     }
     
     func preparePlayer() {
@@ -73,8 +86,6 @@ class JFPlayer: UIView {
         playerLayer.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
     }
     
     
@@ -89,6 +100,60 @@ class JFPlayer: UIView {
         }
     }
     
+    // MARK: - Actions
+    func playButtonPressed(_ button: UIButton) {
+        if playerLayer.isPlaying {
+            pause()
+        } else {
+            play()
+        }
+    }
+    
+    func fullScreenButtonPressed(_ button: UIButton?) {
+        
+        // force change device and status bar orientation, that toggle the UIApplicationDidChangeStatusBarOrientation notification
+        if isFullScreen {
+            
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            statusBarIsHidden = false
+            
+            if let parentViewController = self.parentViewController {
+                UIApplication.shared.jf_updateStatusBarAppearanceHidden(statusBarIsHidden, animation: .none, fromViewController: parentViewController)
+            }
+            UIApplication.shared.statusBarOrientation = .portrait
+        } else {
+            
+            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+            statusBarIsHidden = false
+            
+            if let parentViewController = self.parentViewController {
+                UIApplication.shared.jf_updateStatusBarAppearanceHidden(statusBarIsHidden, animation: .none, fromViewController: parentViewController)
+            }
+            UIApplication.shared.statusBarOrientation = .landscapeRight
+        }
+    }
+    
+    func backButtonPressed(_ button: UIButton) {
+        if isFullScreen {
+            fullScreenButtonPressed(nil)
+        } else {
+            playerLayer.prepareToDeinit()
+            backClosure?()
+        }
+    }
+    
+    func progressSliderTouchBegan(_ slider: JFTimeSlider) {
+        
+    }
+    
+    func progressSliderValueChanged(_ slider: JFTimeSlider) {
+        
+    }
+    
+    func progressSliderTouchEnded(_ slider: JFTimeSlider) {
+        
+    }
+    
     func deviceOrientationDidChange() {
         
         setNeedsLayout()
@@ -101,7 +166,17 @@ class JFPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
+        play()
+    }
+    
+    func play() {
         playerLayer.play()
+        controlView.playButton.isSelected = true
+    }
+    
+    func pause() {
+        playerLayer.pause()
+        controlView.playButton.isSelected = false
     }
 }
 

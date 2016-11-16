@@ -25,6 +25,8 @@
 		08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */; };
 		08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */; };
 		08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */; };
+		08FDB4DF1DDC25CE002DB611 /* UIView+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4DE1DDC25CE002DB611 /* UIView+Extend.swift */; };
+		08FDB4E11DDC34B4002DB611 /* UIApplication+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4E01DDC34B4002DB611 /* UIApplication+Extend.swift */; };
 		23D2ABE29072750FE155D8E3 /* Pods_JFPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDF24803908609D2EF8ACF13 /* Pods_JFPlayerDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +72,8 @@
 		08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootNavigationController.swift; sourceTree = "<group>"; };
 		08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JFPlayer.bundle; sourceTree = "<group>"; };
 		08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerConfiguration.swift; sourceTree = "<group>"; };
+		08FDB4DE1DDC25CE002DB611 /* UIView+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extend.swift"; sourceTree = "<group>"; };
+		08FDB4E01DDC34B4002DB611 /* UIApplication+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extend.swift"; sourceTree = "<group>"; };
 		14C37095A29514F683E49425 /* Pods-JFPlayerDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFPlayerDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFPlayerDemo/Pods-JFPlayerDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		4E1AFBB4332A3E74C16692F0 /* Pods-JFPlayerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFPlayerDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-JFPlayerDemo/Pods-JFPlayerDemo.release.xcconfig"; sourceTree = "<group>"; };
 		4EE72D34842F6311297B52E3 /* Pods-JFPlayerDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JFPlayerDemoTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JFPlayerDemoTests/Pods-JFPlayerDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -185,6 +189,8 @@
 			isa = PBXGroup;
 			children = (
 				08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */,
+				08FDB4DE1DDC25CE002DB611 /* UIView+Extend.swift */,
+				08FDB4E01DDC34B4002DB611 /* UIApplication+Extend.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -409,10 +415,12 @@
 				08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */,
 				080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */,
 				08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */,
+				08FDB4E11DDC34B4002DB611 /* UIApplication+Extend.swift in Sources */,
 				08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */,
 				08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */,
 				0805683B1DD95848006D6A03 /* JFPlayerProtocols.swift in Sources */,
 				08BDA76F1DD9668E00E192A8 /* JFPlayerItem.swift in Sources */,
+				08FDB4DF1DDC25CE002DB611 /* UIView+Extend.swift in Sources */,
 				08939CE51DD9BE0200B855EF /* UINavigationBar+Extend.swift in Sources */,
 				080568371DD957F1006D6A03 /* JFPlayerLayerView.swift in Sources */,
 			);

@@ -33,6 +33,10 @@ class VideoPlayViewController: UIViewController {
 //            make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
         }
         
+        player.backClosure = { [unowned self] in
+            let _ = self.navigationController?.popViewController(animated: true)
+        }
+        
         let bottomView = UIView()
         view.addSubview(bottomView)
         bottomView.snp.makeConstraints { (make) in
@@ -52,6 +56,8 @@ class VideoPlayViewController: UIViewController {
         rightLabel.text = "右边"
         rightLabel.frame = CGRect(x: 250, y: 10, width: 40, height: 20)
         bottomView.addSubview(rightLabel)
+        
+        setNeedsStatusBarAppearanceUpdate()
     }
     
     func playResource() {
@@ -63,13 +69,24 @@ class VideoPlayViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         
         self.navigationController?.navigationBar.isHidden = true
-        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
+//        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
         super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isHidden = false
-        UIApplication.shared.setStatusBarStyle(.default, animated: false)
+//        UIApplication.shared.setStatusBarStyle(.default, animated: false)
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        guard let hidden = player?.statusBarIsHidden else {
+            return false
+        }
+        return hidden
     }
 }

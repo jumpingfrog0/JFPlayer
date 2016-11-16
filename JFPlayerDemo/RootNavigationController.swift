@@ -11,11 +11,25 @@ import UIKit
 class RootNavigationController: UINavigationController {
 
     override var shouldAutorotate: Bool {
-        return topViewController!.shouldAutorotate
+        guard let topViewController = topViewController else {
+            return true
+        }
+        
+        return topViewController.shouldAutorotate
     }
     
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return topViewController!.supportedInterfaceOrientations
+        guard let topViewController = topViewController else {
+            return .all
+        }
+        return topViewController.supportedInterfaceOrientations
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let topViewController = topViewController else {
+            return .default
+        }
+        return topViewController.preferredStatusBarStyle
     }
 }
