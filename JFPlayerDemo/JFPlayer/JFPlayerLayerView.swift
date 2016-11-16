@@ -10,7 +10,8 @@ import UIKit
 import AVFoundation
 
 protocol JFPlayerLayerViewDelegate: class {
-    
+    func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
+//    func player(player: JFPlayer, statusDidChange status: )
 }
 
 class JFPlayerLayerView: UIView {
@@ -21,6 +22,8 @@ class JFPlayerLayerView: UIView {
     var playerItem: AVPlayerItem?
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
+    
+    var timer: Timer?
     
     var isPlaying = false
     
@@ -34,11 +37,18 @@ class JFPlayerLayerView: UIView {
             playerLayer?.videoGravity = AVLayerVideoGravityResizeAspect
             
             layer.insertSublayer(playerLayer!, at: 0)
+            
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
+            
         }
     }
     
     func prepareToDeinit() {
         resetPlayer()
+    }
+    
+    deinit {
+        debugPrint("JFPlayerLayerView -- deinit")
     }
     
     // MARK: - Layout
@@ -58,14 +68,14 @@ class JFPlayerLayerView: UIView {
         if let player = player {
             isPlaying = true
             player.play()
-            
+            timer?.fireDate = Date()
         }
     }
     
     func pause() {
         player?.pause()
         isPlaying = false
-        
+        timer?.fireDate = .distantFuture
     }
     
     func resetPlayer() {
@@ -76,5 +86,45 @@ class JFPlayerLayerView: UIView {
         playerLayer?.removeFromSuperlayer()
         player?.replaceCurrentItem(with: nil)
         player = nil
+        
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    func playerTimerAction() {
+        guard let playerItem = playerItem else {
+            return
+        }
+        
+        if playerItem.duration.timescale != 0 {
+            let currentTime = CMTimeGetSeconds(player!.currentTime())
+            let totalTime = TimeInterval(playerItem.duration.value) / TimeInterval(playerItem.duration.timescale)
+            delegate?.playerLayerView(playerLayerView: self, trackTimeDidChange: currentTime, totalTime: totalTime)
+        }
+    }
+    
+    func onTimeSliderBegan() {
+        if player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
+            timer?.fireDate = .distantFuture
+        }
+    }
+    
+    func onTimeSliderEnd() {
+        if player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
+            timer?.fireDate = Date()
+        }
+    }
+    
+    func seekToTime(_ seconds: TimeInterval, completionHandler: (() -> Void)? ) {
+        if seconds.isNaN {
+            return
+        }
+        
+        if player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
+            let draggedTime = CMTimeMake(Int64(seconds), 1)
+            player?.seek(to: draggedTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { (_) in
+                completionHandler?()
+            })
+        }
     }
 }

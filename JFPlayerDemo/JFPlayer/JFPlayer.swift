@@ -21,6 +21,7 @@ class JFPlayer: UIView {
         return UIApplication.shared.statusBarOrientation.isLandscape
     }
     var statusBarIsHidden = false
+    var totalDuration: TimeInterval = 0
     
     /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
@@ -51,6 +52,10 @@ class JFPlayer: UIView {
             detectSizeRatio()
             sizeRatioDetected = true
         }
+    }
+    
+    deinit {
+        debugPrint("JFPlayer -- deinit")
     }
     
     // MARK: - Setup
@@ -143,15 +148,19 @@ class JFPlayer: UIView {
     }
     
     func progressSliderTouchBegan(_ slider: JFTimeSlider) {
-        
+        playerLayer.onTimeSliderBegan()
     }
     
     func progressSliderValueChanged(_ slider: JFTimeSlider) {
-        
+        let target = totalDuration * TimeInterval(slider.value)
+        controlView.currentTimeLabel.text = formatSecondsToString(target)
     }
     
     func progressSliderTouchEnded(_ slider: JFTimeSlider) {
-        
+        let target = totalDuration * TimeInterval(slider.value)
+        playerLayer.seekToTime(target, completionHandler: nil)
+        playerLayer.onTimeSliderEnd()
+        play()
     }
     
     func deviceOrientationDidChange() {
@@ -178,12 +187,24 @@ class JFPlayer: UIView {
         playerLayer.pause()
         controlView.playButton.isSelected = false
     }
+    
+    // MARK: - Private Methods
+    func formatSecondsToString(_ seconds: TimeInterval) -> String {
+        let min = Int(seconds / 60)
+        let sec = Int(seconds.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d", min, sec)
+    }
 }
 
 // MARK: - JFPlayerLayerViewDelegate
 
 extension JFPlayer: JFPlayerLayerViewDelegate {
-    
+    func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval) {
+        totalDuration = totalTime
+        controlView.currentTimeLabel.text = formatSecondsToString(currentTime)
+        controlView.totalTimeLabel.text = formatSecondsToString(totalTime)
+        controlView.timeSlider.value = Float(currentTime / totalTime)
+    }
 }
 
 // MARK: - JFPlayerControlViewDelegate
