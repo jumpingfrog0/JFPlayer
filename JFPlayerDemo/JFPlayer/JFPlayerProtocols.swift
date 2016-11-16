@@ -28,3 +28,9 @@ protocol JFPlayerDefinitionProtocol {
     /// definition name, e.g. standard, high, super
     var definitionName: String { get set }
 }
+
+protocol JFPlayerLayerViewDelegate: class {
+    
+    func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
+    func playerLayerView(playerLayerView: JFPlayerLayerView, statusDidChange status: JFPlayerStatus)
+}

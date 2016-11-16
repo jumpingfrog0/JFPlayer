@@ -117,7 +117,7 @@ class JFTimeSlider: UISlider {
         addSubview(replayButton)
         replayButton.isHidden = true
         replayButton.setImage(JFImageResourcePath("BMplayer_replay"), for: .normal)
-        replayButton.addTarget(self, action: #selector(pressedReplayButton), for: .touchUpInside)
+        replayButton.addTarget(self, action: #selector(pressedReplayButton(_:)), for: .touchUpInside)
     }
     
     func layout() {
@@ -197,7 +197,7 @@ class JFTimeSlider: UISlider {
     }
     
     // MARK: - Private Methods
-    func JFImageResourcePath(_ filename: String) -> UIImage? {
+    fileprivate func JFImageResourcePath(_ filename: String) -> UIImage? {
         if let bunbleUrl = Bundle.main.url(forResource: "JFPlayer", withExtension: "bundle") {
             if let bunble = Bundle(url: bunbleUrl) {
                 return UIImage(named: filename, in: bunble, compatibleWith: nil)
@@ -212,8 +212,8 @@ class JFTimeSlider: UISlider {
     
     // MARK: - Actions
     
-    func pressedReplayButton() {
-        
+    func pressedReplayButton(_ button: UIButton) {
+        button.isHidden = true
     }
     
     // MARK: - Public Methods
@@ -230,12 +230,18 @@ class JFTimeSlider: UISlider {
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
     }
     
+    func showPlayToEndView() {
+        replayButton.isHidden = false
+    }
+    
     func updateUI(isForFullScreen: Bool) {
         
         isFullScreen = isForFullScreen
         
         if isForFullScreen {
-//            fullScreenButton.setImage(<#T##image: UIImage?##UIImage?#>, for: <#T##UIControlState#>)
+            fullScreenButton.setImage(JFImageResourcePath("BMPlayer_portialscreen"), for: .normal)
+        } else {
+            fullScreenButton.setImage(JFImageResourcePath("BMPlayer_fullscreen"), for: .normal)
         }
     }
 }

@@ -9,11 +9,6 @@
 import UIKit
 import AVFoundation
 
-protocol JFPlayerLayerViewDelegate: class {
-    func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
-//    func player(player: JFPlayer, statusDidChange status: )
-}
-
 class JFPlayerLayerView: UIView {
 
     weak var delegate: JFPlayerLayerViewDelegate?
@@ -26,6 +21,8 @@ class JFPlayerLayerView: UIView {
     var timer: Timer?
     
     var isPlaying = false
+    var isPlayToEnd = false
+    var status: JFPlayerStatus = .unknown
     
     // MARK: - Configure
     
@@ -40,6 +37,7 @@ class JFPlayerLayerView: UIView {
             
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
             
+            NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
         }
     }
     
@@ -48,6 +46,7 @@ class JFPlayerLayerView: UIView {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
         debugPrint("JFPlayerLayerView -- deinit")
     }
     
@@ -86,6 +85,7 @@ class JFPlayerLayerView: UIView {
         playerLayer?.removeFromSuperlayer()
         player?.replaceCurrentItem(with: nil)
         player = nil
+        isPlayToEnd = true
         
         timer?.invalidate()
         timer = nil
@@ -126,5 +126,11 @@ class JFPlayerLayerView: UIView {
                 completionHandler?()
             })
         }
+    }
+    
+    func playerDidPlayToEnd(_ notification: Notification) {
+        isPlayToEnd = true
+        status = .playToEnd
+        delegate?.playerLayerView(playerLayerView: self, statusDidChange: status)
     }
 }

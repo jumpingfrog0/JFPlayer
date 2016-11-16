@@ -9,6 +9,15 @@
 import UIKit
 import SnapKit
 
+enum JFPlayerStatus {
+    case unknown
+    case readyToPlay
+    case buffering
+    case bufferFinished
+    case playToEnd
+    case error
+}
+
 class JFPlayer: UIView {
 
     var backClosure: (() -> Void)?
@@ -20,8 +29,13 @@ class JFPlayer: UIView {
     var isFullScreen: Bool {
         return UIApplication.shared.statusBarOrientation.isLandscape
     }
+    
+    var isMaskShowing = true
     var statusBarIsHidden = false
     var totalDuration: TimeInterval = 0
+    
+    var JFPlayerControlViewAutoFadeOutTimeInterval = 0.5
+    var JFPlayerAnimationTimeInterval = 4.0
     
     /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
@@ -55,7 +69,44 @@ class JFPlayer: UIView {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
         debugPrint("JFPlayer -- deinit")
+    }
+    
+    // MARK: - Public Methods
+    
+    func playWithUrl(_ url: URL, title: String = "") {
+        playerLayer.videoUrl = url
+        controlView.titleLabel.text = title
+        playerLayer.configurePlayer()
+        play()
+    }
+    
+    func play() {
+        playerLayer.play()
+        controlView.playButton.isSelected = true
+        autoFadeOutControlView()
+    }
+    
+    func pause() {
+        playerLayer.pause()
+        controlView.playButton.isSelected = false
+        showControlViewAnimated()
+    }
+    
+    func replay() {
+        playerLayer.seekToTime(0) { [unowned self] in
+            self.play()
+        }
+    }
+    
+    func autoFadeOutControlView() {
+        cancelAutoFadeOutControlView()
+        perform(#selector(hideControlViewAnimated), with: nil, afterDelay: JFPlayerAnimationTimeInterval)
+    }
+    
+    func cancelAutoFadeOutControlView() {
+        NSObject.cancelPreviousPerformRequests(withTarget: self)
     }
     
     // MARK: - Setup
@@ -77,11 +128,13 @@ class JFPlayer: UIView {
         controlView.playButton.addTarget(self, action: #selector(playButtonPressed(_:)), for: .touchUpInside)
         controlView.fullScreenButton.addTarget(self, action: #selector(fullScreenButtonPressed(_:)), for: .touchUpInside)
         controlView.backButton.addTarget(self, action: #selector(backButtonPressed(_:)), for: .touchUpInside)
+        controlView.replayButton.addTarget(self, action: #selector(replayButtonPressed(_:)), for: .touchUpInside)
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureTapped(_:))))
     }
     
     func preparePlayer() {
@@ -106,6 +159,15 @@ class JFPlayer: UIView {
     }
     
     // MARK: - Actions
+    
+    func tapGestureTapped(_ recognizer: UITapGestureRecognizer) {
+        if isMaskShowing {
+            hideControlViewAnimated()
+        } else {
+            showControlViewAnimated()
+        }
+    }
+    
     func playButtonPressed(_ button: UIButton) {
         if playerLayer.isPlaying {
             pause()
@@ -120,20 +182,12 @@ class JFPlayer: UIView {
         if isFullScreen {
             
             UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            statusBarIsHidden = false
-            
-            if let parentViewController = self.parentViewController {
-                UIApplication.shared.jf_updateStatusBarAppearanceHidden(statusBarIsHidden, animation: .none, fromViewController: parentViewController)
-            }
+            updateStatusBarAppearanceHidden(false)
             UIApplication.shared.statusBarOrientation = .portrait
         } else {
             
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-            statusBarIsHidden = false
-            
-            if let parentViewController = self.parentViewController {
-                UIApplication.shared.jf_updateStatusBarAppearanceHidden(statusBarIsHidden, animation: .none, fromViewController: parentViewController)
-            }
+            updateStatusBarAppearanceHidden(false)
             UIApplication.shared.statusBarOrientation = .landscapeRight
         }
     }
@@ -145,6 +199,10 @@ class JFPlayer: UIView {
             playerLayer.prepareToDeinit()
             backClosure?()
         }
+    }
+    
+    func replayButtonPressed(_ button: UIButton) {
+        replay()
     }
     
     func progressSliderTouchBegan(_ slider: JFTimeSlider) {
@@ -168,31 +226,49 @@ class JFPlayer: UIView {
         setNeedsLayout()
         controlView.updateUI(isForFullScreen: isFullScreen)
     }
-
-    // MARK: - Public Methods
-    
-    func playWithUrl(_ url: URL, title: String = "") {
-        playerLayer.videoUrl = url
-        controlView.titleLabel.text = title
-        playerLayer.configurePlayer()
-        play()
-    }
-    
-    func play() {
-        playerLayer.play()
-        controlView.playButton.isSelected = true
-    }
-    
-    func pause() {
-        playerLayer.pause()
-        controlView.playButton.isSelected = false
-    }
     
     // MARK: - Private Methods
-    func formatSecondsToString(_ seconds: TimeInterval) -> String {
+    fileprivate func formatSecondsToString(_ seconds: TimeInterval) -> String {
         let min = Int(seconds / 60)
         let sec = Int(seconds.truncatingRemainder(dividingBy: 60))
         return String(format: "%02d:%02d", min, sec)
+    }
+    
+    fileprivate func showControlViewAnimated() {
+        UIView.animate(withDuration: JFPlayerControlViewAutoFadeOutTimeInterval, animations: {
+            
+            self.controlView.showUIComponents()
+            self.updateStatusBarAppearanceHidden(false)
+            
+        }, completion: { _ in
+            self.isMaskShowing = true
+            
+            // do not fade out control view if player is paused
+            if self.playerLayer.isPlaying {
+                self.autoFadeOutControlView()
+            } else {
+                self.cancelAutoFadeOutControlView()
+            }
+        })
+    }
+    
+    @objc fileprivate func hideControlViewAnimated() {
+        UIView.animate(withDuration: JFPlayerControlViewAutoFadeOutTimeInterval, animations: {
+            
+            self.controlView.hideUIComponents()
+            self.updateStatusBarAppearanceHidden(true)
+            
+        }, completion: { _ in
+            self.isMaskShowing = false
+            self.cancelAutoFadeOutControlView()
+        })
+    }
+    
+    fileprivate func updateStatusBarAppearanceHidden(_ hidden: Bool) {
+        statusBarIsHidden = hidden
+        if let parentViewController = self.parentViewController {
+            UIApplication.shared.jf_updateStatusBarAppearanceHidden(self.statusBarIsHidden, animation: .none, fromViewController: parentViewController)
+        }
     }
 }
 
@@ -204,6 +280,15 @@ extension JFPlayer: JFPlayerLayerViewDelegate {
         controlView.currentTimeLabel.text = formatSecondsToString(currentTime)
         controlView.totalTimeLabel.text = formatSecondsToString(totalTime)
         controlView.timeSlider.value = Float(currentTime / totalTime)
+    }
+    
+    func playerLayerView(playerLayerView: JFPlayerLayerView, statusDidChange status: JFPlayerStatus) {
+        switch status {
+        case .playToEnd:
+            controlView.showPlayToEndView()
+        default:
+            break
+        }
     }
 }
 
