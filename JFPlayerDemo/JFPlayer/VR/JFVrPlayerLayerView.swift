@@ -41,53 +41,10 @@ class JFVrPlayerLayerView: UIView {
     
     var timer: Timer?
     
+    var isVrMode = true
     var isPlaying = false
     var isPlayToEnd = false
     var status: JFPlayerStatus = .unknown
-
-//
-//    func switchMode() {
-//        
-//        isVRMode = !isVRMode
-//        
-//        if isVRMode {
-//            makeVR()
-//        } else {
-//            makeNormal()
-//        }
-//    }
-//    
-//    func makeVR() {
-//        let width = UIScreen.main.bounds.width
-//        let height = UIScreen.main.bounds.height
-//        leftSceneView.frame = CGRect(x: 0, y: 0, width: width, height: height / 2)
-//        rightSceneView.frame = CGRect(x: 0, y: height / 2, width: width, height: height / 2)
-//        leftSceneView.alpha = 1.0
-//        rightSceneView.alpha = 1.0
-//    }
-//    
-//    func makeNormal() {
-//        leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
-//        rightSceneView.alpha = 0.0
-//    }
-//    
-//    func clickFullScreenButton(button: UIButton) {
-//        fullScreenCallback?()
-//    }
-//    
-//    func showInView(view: UIView) {
-//        
-//        view.addSubview(self)
-//    }
-//    
-//    func stop() {
-//        leftSceneView.isPlaying = false
-//        rightSceneView.isPlaying = false
-//        videoRenderNode.pause()
-//        motionManager.stopGyroUpdates()
-//    }
-    
-
     
     // MARK: - Initialize
     
@@ -224,6 +181,8 @@ class JFVrPlayerLayerView: UIView {
         //        var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
         //        transform = SCNMatrix4Rotate(transform, Float(M_PI), 0, 1, 0)
         //        playerNode.transform = transform
+        
+        switchToNormalMode()
     }
     
     func prepareToDeinit() {
@@ -240,12 +199,38 @@ class JFVrPlayerLayerView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-//        playerLayer?.frame = bounds
-        leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width / 2, height: bounds.height)
-        rightSceneView.frame = CGRect(x: bounds.width / 2, y: 0, width: bounds.width / 2, height: bounds.height)
+        if isVrMode {
+            leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width / 2, height: bounds.height)
+            rightSceneView.frame = CGRect(x: bounds.width / 2, y: 0, width: bounds.width / 2, height: bounds.height)
+        } else  {
+            leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+        }
+        
     }
     
     func updateUI() {
+        setNeedsLayout()
+    }
+    
+    func switchMode() {
+        
+        if isVrMode {
+            switchToNormalMode()
+        } else {
+            switchToVrMode()
+        }
+    }
+    
+    func switchToVrMode() {
+        isVrMode = true
+        leftSceneView.alpha = 1.0
+        rightSceneView.alpha = 1.0
+        setNeedsLayout()
+    }
+    
+    func switchToNormalMode() {
+        isVrMode = false
+        rightSceneView.alpha = 0.0
         setNeedsLayout()
     }
     
@@ -255,11 +240,13 @@ class JFVrPlayerLayerView: UIView {
         leftSceneView.isPlaying = true
         rightSceneView.isPlaying = true
         videoNode?.play()
+        player?.play()
         timer?.fireDate = Date()
     }
     
     func pause() {
         videoNode?.pause()
+        player?.pause()
         isPlaying = false
         leftSceneView.isPlaying = false
         rightSceneView.isPlaying = false

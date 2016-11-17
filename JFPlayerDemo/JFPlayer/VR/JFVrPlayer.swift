@@ -104,6 +104,7 @@ class JFVrPlayer: UIView {
         
         controlView = JFPlayerControlView()
         controlView.delegate = self
+        controlView.isVrPlayer = true
         addSubview(controlView)
         
         controlView.snp.makeConstraints { (make) in
@@ -120,6 +121,7 @@ class JFVrPlayer: UIView {
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
+        controlView.modeButton.addTarget(self, action: #selector(modeButtonPressed(_:)), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureTapped(_:))))
@@ -147,6 +149,12 @@ class JFVrPlayer: UIView {
     }
     
     // MARK: - Actions
+    
+    func deviceOrientationDidChange() {
+        
+        setNeedsLayout()
+        controlView.updateUI(isForFullScreen: isFullScreen)
+    }
     
     func tapGestureTapped(_ recognizer: UITapGestureRecognizer) {
         if isMaskShowing {
@@ -213,10 +221,9 @@ class JFVrPlayer: UIView {
         play()
     }
     
-    func deviceOrientationDidChange() {
-        
-        setNeedsLayout()
-        controlView.updateUI(isForFullScreen: isFullScreen)
+    func modeButtonPressed(_ button: UIButton) {
+        button.isSelected = !button.isSelected
+        playerLayer.switchMode()
     }
     
     // MARK: - Private Methods

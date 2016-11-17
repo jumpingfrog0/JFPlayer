@@ -26,6 +26,7 @@ class JFTimeSlider: UISlider {
     var backButton = UIButton(type: UIButtonType.custom)
     var titleLabel = UILabel()
     var definitionView = UIView()
+    var modeButton = UIButton(type: UIButtonType.custom) // only display in VR player
     
     /// Bottom
     var currentTimeLabel = UILabel()
@@ -44,6 +45,11 @@ class JFTimeSlider: UISlider {
     var configuration = JFPlayerConfiguration()
     
     var isFullScreen = false
+    var isVrPlayer = false {
+        didSet {
+            modeButton.isHidden = !isVrPlayer
+        }
+    }
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -69,12 +75,18 @@ class JFTimeSlider: UISlider {
         // Top
         topBar.addSubview(backButton)
         topBar.addSubview(titleLabel)
+        topBar.addSubview(modeButton)
         
         backButton.setImage(JFImageResourcePath("BMPlayer_back"), for: .normal)
         
         titleLabel.text = ""
         titleLabel.textColor = UIColor.white
         titleLabel.font = UIFont.systemFont(ofSize: 16)
+        
+        modeButton.isHidden = true
+        modeButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        modeButton.setTitle("VR", for: .normal)
+        modeButton.setTitle("普通", for: .selected)
         
         // Bottom
         bottomBar.addSubview(playButton)
@@ -145,6 +157,12 @@ class JFTimeSlider: UISlider {
         titleLabel.snp.makeConstraints { (make) in
             make.left.equalTo(backButton.snp.right)
             make.centerY.equalTo(backButton)
+        }
+        
+        modeButton.snp.makeConstraints { (make) in
+            make.centerY.equalTo(backButton)
+            make.right.equalTo(topBar.snp.right).offset(-10)
+            make.width.height.equalTo(50)
         }
         
         // Bottom
