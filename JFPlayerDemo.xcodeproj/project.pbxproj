@@ -18,6 +18,10 @@
 		080568371DD957F1006D6A03 /* JFPlayerLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080568361DD957F1006D6A03 /* JFPlayerLayerView.swift */; };
 		080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080568381DD95800006D6A03 /* JFPlayerControlView.swift */; };
 		0805683B1DD95848006D6A03 /* JFPlayerProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */; };
+		088758AD1DDCAE4B00C47E78 /* Aerial_photography.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */; };
+		088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */; };
+		088758B41DDCBCF200C47E78 /* JFVrPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */; };
+		088758B61DDCBD6600C47E78 /* JFVrPlayerLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */; };
 		08939CE51DD9BE0200B855EF /* UINavigationBar+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */; };
 		08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE61DDB034B00B855EF /* BaseViewController.swift */; };
 		08BDA76F1DD9668E00E192A8 /* JFPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */; };
@@ -65,6 +69,10 @@
 		080568361DD957F1006D6A03 /* JFPlayerLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerLayerView.swift; sourceTree = "<group>"; };
 		080568381DD95800006D6A03 /* JFPlayerControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerControlView.swift; sourceTree = "<group>"; };
 		0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerProtocols.swift; sourceTree = "<group>"; };
+		088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Aerial_photography.mp4; sourceTree = "<group>"; };
+		088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRPlayerViewController.swift; sourceTree = "<group>"; };
+		088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayer.swift; sourceTree = "<group>"; };
+		088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayerLayerView.swift; sourceTree = "<group>"; };
 		08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Extend.swift"; sourceTree = "<group>"; };
 		08939CE61DDB034B00B855EF /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerItem.swift; sourceTree = "<group>"; };
@@ -138,6 +146,7 @@
 		080568021DD8D72B006D6A03 /* JFPlayerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				088758AB1DDCAD6500C47E78 /* Resources */,
 				08939CE31DD9BDE200B855EF /* Extension */,
 				080568331DD957BA006D6A03 /* JFPlayer */,
 				080568031DD8D72B006D6A03 /* AppDelegate.swift */,
@@ -145,6 +154,7 @@
 				08939CE61DDB034B00B855EF /* BaseViewController.swift */,
 				08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */,
 				08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */,
+				088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */,
 				080568071DD8D72B006D6A03 /* Main.storyboard */,
 				0805680A1DD8D72B006D6A03 /* Assets.xcassets */,
 				0805680C1DD8D72B006D6A03 /* LaunchScreen.storyboard */,
@@ -174,6 +184,7 @@
 		080568331DD957BA006D6A03 /* JFPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				088758B21DDCBCD100C47E78 /* VR */,
 				08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */,
 				080568341DD957D2006D6A03 /* JFPlayer.swift */,
 				08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */,
@@ -183,6 +194,23 @@
 				0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */,
 			);
 			path = JFPlayer;
+			sourceTree = "<group>";
+		};
+		088758AB1DDCAD6500C47E78 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		088758B21DDCBCD100C47E78 /* VR */ = {
+			isa = PBXGroup;
+			children = (
+				088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */,
+				088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */,
+			);
+			path = VR;
 			sourceTree = "<group>";
 		};
 		08939CE31DD9BDE200B855EF /* Extension */ = {
@@ -333,6 +361,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				088758AD1DDCAE4B00C47E78 /* Aerial_photography.mp4 in Resources */,
 				08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */,
 				0805680E1DD8D72B006D6A03 /* LaunchScreen.storyboard in Resources */,
 				0805680B1DD8D72B006D6A03 /* Assets.xcassets in Resources */,
@@ -409,16 +438,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				088758B41DDCBCF200C47E78 /* JFVrPlayer.swift in Sources */,
 				080568061DD8D72B006D6A03 /* ViewController.swift in Sources */,
 				080568041DD8D72B006D6A03 /* AppDelegate.swift in Sources */,
 				080568351DD957D2006D6A03 /* JFPlayer.swift in Sources */,
 				08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */,
+				088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */,
 				080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */,
 				08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */,
 				08FDB4E11DDC34B4002DB611 /* UIApplication+Extend.swift in Sources */,
 				08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */,
 				08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */,
 				0805683B1DD95848006D6A03 /* JFPlayerProtocols.swift in Sources */,
+				088758B61DDCBD6600C47E78 /* JFVrPlayerLayerView.swift in Sources */,
 				08BDA76F1DD9668E00E192A8 /* JFPlayerItem.swift in Sources */,
 				08FDB4DF1DDC25CE002DB611 /* UIView+Extend.swift in Sources */,
 				08939CE51DD9BE0200B855EF /* UINavigationBar+Extend.swift in Sources */,

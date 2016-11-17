@@ -69,14 +69,12 @@ class VideoPlayViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         
         self.navigationController?.navigationBar.isHidden = true
-//        UIApplication.shared.setStatusBarStyle(.lightContent, animated: false)
         super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isHidden = false
-//        UIApplication.shared.setStatusBarStyle(.default, animated: false)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

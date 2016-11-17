@@ -34,11 +34,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qN9-4H-HvO">
-                                <frame key="frameInset" minX="151" minY="103" width="31" height="30"/>
+                                <frame key="frameInset" minX="128" minY="103" width="77" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="播放"/>
+                                <state key="normal" title="普通播放器"/>
                                 <connections>
                                     <segue destination="CvN-Zx-JMP" kind="show" id="8gQ-Hx-rtC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7EY-G9-DqR">
+                                <frame key="frameInset" minX="134" minY="141" width="66" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="VR播放器"/>
+                                <connections>
+                                    <segue destination="4G1-eg-CZ6" kind="show" id="tmq-LP-hdr"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -48,6 +56,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-116" y="52"/>
         </scene>
         <!--Video Play View Controller-->
         <scene sceneID="UrB-jT-Hq8">
@@ -67,7 +76,27 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uQE-lJ-I44" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="844" y="139"/>
+            <point key="canvasLocation" x="663" y="-231"/>
+        </scene>
+        <!--Player View Controller-->
+        <scene sceneID="Dwq-NU-uVr">
+            <objects>
+                <viewController id="4G1-eg-CZ6" customClass="VRPlayerViewController" customModule="JFPlayerDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4Yj-Gk-k8B"/>
+                        <viewControllerLayoutGuide type="bottom" id="CBT-KY-TYC"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="nSr-TT-Ckj">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Bjo-JD-lqW"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pXs-AT-Q03" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="662" y="423"/>
         </scene>
     </scenes>
 </document>

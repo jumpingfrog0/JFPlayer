@@ -18,6 +18,14 @@ enum JFPlayerStatus {
     case error
 }
 
+extension JFPlayer {
+    struct AnimationTimeInterval {
+        static let fadeOut = 0.5
+        static let delay = 4.0
+
+    }
+}
+
 class JFPlayer: UIView {
 
     var backClosure: (() -> Void)?
@@ -33,9 +41,6 @@ class JFPlayer: UIView {
     var isMaskShowing = true
     var statusBarIsHidden = false
     var totalDuration: TimeInterval = 0
-    
-    var JFPlayerControlViewAutoFadeOutTimeInterval = 0.5
-    var JFPlayerAnimationTimeInterval = 4.0
     
     /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
@@ -102,7 +107,7 @@ class JFPlayer: UIView {
     
     func autoFadeOutControlView() {
         cancelAutoFadeOutControlView()
-        perform(#selector(hideControlViewAnimated), with: nil, afterDelay: JFPlayerAnimationTimeInterval)
+        perform(#selector(hideControlViewAnimated), with: nil, afterDelay: JFPlayer.AnimationTimeInterval.delay)
     }
     
     func cancelAutoFadeOutControlView() {
@@ -235,7 +240,7 @@ class JFPlayer: UIView {
     }
     
     fileprivate func showControlViewAnimated() {
-        UIView.animate(withDuration: JFPlayerControlViewAutoFadeOutTimeInterval, animations: {
+        UIView.animate(withDuration: JFPlayer.AnimationTimeInterval.fadeOut, animations: {
             
             self.controlView.showUIComponents()
             self.updateStatusBarAppearanceHidden(false)
@@ -253,7 +258,7 @@ class JFPlayer: UIView {
     }
     
     @objc fileprivate func hideControlViewAnimated() {
-        UIView.animate(withDuration: JFPlayerControlViewAutoFadeOutTimeInterval, animations: {
+        UIView.animate(withDuration: JFPlayer.AnimationTimeInterval.fadeOut, animations: {
             
             self.controlView.hideUIComponents()
             self.updateStatusBarAppearanceHidden(true)

@@ -130,6 +130,7 @@ class JFPlayerLayerView: UIView {
     
     func playerDidPlayToEnd(_ notification: Notification) {
         isPlayToEnd = true
+        isPlaying = false
         status = .playToEnd
         delegate?.playerLayerView(playerLayerView: self, statusDidChange: status)
     }

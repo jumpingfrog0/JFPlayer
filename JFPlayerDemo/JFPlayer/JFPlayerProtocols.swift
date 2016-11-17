@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: - JFPlayer Protocols
+
 public protocol JFPlayerControlViewDelegate: class {
     
     
@@ -31,6 +33,49 @@ protocol JFPlayerDefinitionProtocol {
 
 protocol JFPlayerLayerViewDelegate: class {
     
+    
+    /// Call this method to handle something according to current time
+    ///
+    /// - parameter playerLayerView: the view of player layer
+    /// - parameter currentTime:     the time(seconds) that player have played
+    /// - parameter totalTime:       total duration of the player item
     func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
+    
+    /// Call this method to handle something according to the status of player item
+    ///
+    /// - parameter playerLayerView: the view of player layer
+    /// - parameter status:          the status of player item
     func playerLayerView(playerLayerView: JFPlayerLayerView, statusDidChange status: JFPlayerStatus)
+}
+
+// MARK: - JFVrPlayer Protocols
+
+public protocol JFVrPlayerControlViewDelegate: class {
+    
+    
+    /// Call this method when user select to change definition
+    ///
+    /// - parameter index: definition item index
+    func controlViewDidSelectDefinition(_ index: Int)
+    
+    
+    /// Call this method when user press on replay button
+    func controlViewDidPressOnReplay()
+}
+
+protocol JFVrPlayerLayerViewDelegate: class {
+    
+    
+    /// Call this method to handle something according to current time
+    ///
+    /// - parameter vrPlayerLayerView: the view of vr player layer
+    /// - parameter currentTime:     the time(seconds) that player have played
+    /// - parameter totalTime:       total duration of the player item
+    func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
+    
+    /// Call this method to handle something according to the status of player item
+    ///
+    /// - parameter vrPlayerLayerView: the view of vr player layer
+    /// - parameter status:          the status of player item
+    func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, statusDidChange status: JFPlayerStatus)
 }
