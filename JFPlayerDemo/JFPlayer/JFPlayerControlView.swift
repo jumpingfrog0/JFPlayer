@@ -214,20 +214,6 @@ class JFTimeSlider: UISlider {
         }
     }
     
-    // MARK: - Private Methods
-    fileprivate func JFImageResourcePath(_ filename: String) -> UIImage? {
-        if let bunbleUrl = Bundle.main.url(forResource: "JFPlayer", withExtension: "bundle") {
-            if let bunble = Bundle(url: bunbleUrl) {
-                return UIImage(named: filename, in: bunble, compatibleWith: nil)
-            } else {
-                assertionFailure("Could not load the bundle")
-            }
-        } else {
-            assertionFailure("Could not create a path to the bundle")
-        }
-        return nil
-    }
-    
     // MARK: - Actions
     
     func pressedReplayButton(_ button: UIButton) {

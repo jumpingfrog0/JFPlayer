@@ -14,6 +14,8 @@ import SpriteKit
 import AVFoundation
 
 class JFVrPlayerLayerView: UIView {
+    
+    weak var delegate: JFVrPlayerLayerViewDelegate?
 
     // Scene
     var leftSceneView: SCNView!
@@ -30,14 +32,16 @@ class JFVrPlayerLayerView: UIView {
     fileprivate var rightCameraPitchNode: SCNNode!
     fileprivate var rightCameraYawNode: SCNNode!
 
+    // Player
+    var videoUrl: URL?
+    fileprivate var playerItem: AVPlayerItem?
     fileprivate var videoNode: SKVideoNode?
     var playerNode: SCNNode?
     var player: AVPlayer?
     
-    weak var delegate: JFVrPlayerLayerViewDelegate?
-    
-    var videoUrl: URL?
-    var playerItem: AVPlayerItem?
+    // Focus
+    var leftFocus: UIImageView!
+    var rightFocus: UIImageView!
     
     var timer: Timer?
     
@@ -52,12 +56,14 @@ class JFVrPlayerLayerView: UIView {
         super.init(frame: frame)
         initScenes()
         initCameras()
+        initFocus()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initScenes()
         initCameras()
+        initFocus()
     }
     
     /// create sences
@@ -130,6 +136,25 @@ class JFVrPlayerLayerView: UIView {
         rightSceneView.pointOfView = rightCameraNode
     }
     
+    /// Create focal spot
+    func initFocus() {
+        
+        leftFocus = UIImageView(image: JFImageResourcePath("selecting-vr_00000"))
+        leftFocus.alpha = 0.6
+        
+        
+        rightFocus = UIImageView(image: JFImageResourcePath("selecting-vr_00000"))
+        rightFocus.alpha = 0.6
+        
+        insertSubview(leftFocus, at: 10)
+        insertSubview(rightFocus, at: 10)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+        debugPrint("JFPlayerLayerView -- deinit")
+    }
+    
     // MARK: - Configure
     
     func configurePlayer() {
@@ -189,11 +214,6 @@ class JFVrPlayerLayerView: UIView {
         resetPlayer()
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
-        debugPrint("JFPlayerLayerView -- deinit")
-    }
-    
     // MARK: - Layout
     
     override func layoutSubviews() {
@@ -202,8 +222,11 @@ class JFVrPlayerLayerView: UIView {
         if isVrMode {
             leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width / 2, height: bounds.height)
             rightSceneView.frame = CGRect(x: bounds.width / 2, y: 0, width: bounds.width / 2, height: bounds.height)
+            leftFocus.frame = CGRect(x: bounds.width / 4 - 24, y: bounds.height / 2 - 24, width: 48, height: 48)
+            rightFocus.frame = CGRect(x: bounds.width / 4 * 3 - 24, y: bounds.height / 2 - 24, width: 48, height: 48)
         } else  {
             leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+            leftFocus.frame = CGRect(x: bounds.width / 2 - 24, y: bounds.height / 2 - 24, width: 48, height: 48)
         }
         
     }
@@ -225,12 +248,15 @@ class JFVrPlayerLayerView: UIView {
         isVrMode = true
         leftSceneView.alpha = 1.0
         rightSceneView.alpha = 1.0
+        leftFocus.alpha = 1.0
+        rightFocus.alpha = 1.0
         setNeedsLayout()
     }
     
     func switchToNormalMode() {
         isVrMode = false
         rightSceneView.alpha = 0.0
+        rightFocus.alpha = 0.0
         setNeedsLayout()
     }
     

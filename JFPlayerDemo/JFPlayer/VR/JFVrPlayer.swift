@@ -67,6 +67,7 @@ class JFVrPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
+//        playerLayer.initFocus()
         play()
     }
     
