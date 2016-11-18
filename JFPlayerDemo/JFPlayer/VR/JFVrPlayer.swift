@@ -13,6 +13,8 @@ class JFVrPlayer: UIView {
     
     var backClosure: (() -> Void)?
     
+    var menus: [String]?
+    
 //    var videoItem: JFPlayerItem!
     var playerLayer: JFVrPlayerLayerView!
     var controlView: JFPlayerControlView!
@@ -67,7 +69,7 @@ class JFVrPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
-//        playerLayer.addMenu(image: UIImage(named: "xiongchumo")!, width: 100, height: 100, position: SCNVector3(0, 0 , 10), rotation: SCNVector4(x: 0, y: 1, z: 0, w: -Float(M_PI_2)))
+        playerLayer.addMenus(menus: ["xiongchumo"])
         play()
     }
     
@@ -155,6 +157,7 @@ class JFVrPlayer: UIView {
         
         setNeedsLayout()
         controlView.updateUI(isForFullScreen: isFullScreen)
+        playerLayer.updateUI(isForFullScreen: isFullScreen)
     }
     
     func tapGestureTapped(_ recognizer: UITapGestureRecognizer) {

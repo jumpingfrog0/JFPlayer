@@ -25,6 +25,8 @@ class JFVrPlayerLayerView: UIView {
     var motionManager: CMMotionManager!
 
     // Camera
+    fileprivate var leftCameraNode: SCNNode!
+    fileprivate var rightCameraNode: SCNNode!
     fileprivate var leftCameraRollNode: SCNNode!
     fileprivate var leftCameraPitchNode: SCNNode!
     fileprivate var leftCameraYawNode: SCNNode!
@@ -44,11 +46,13 @@ class JFVrPlayerLayerView: UIView {
     var rightFocus: UIImageView!
     
     var timer: Timer?
+    var focusDetectionTimer: Timer?
     
     var isVrMode = true
     var isPlaying = false
     var isPlayToEnd = false
     var status: JFPlayerStatus = .unknown
+    var isFullScreen = false
     
     // MARK: - Initialize
     
@@ -103,11 +107,11 @@ class JFVrPlayerLayerView: UIView {
         rightCamera.yFov = yFov
         rightCamera.zFar = zFar
 
-        let leftCameraNode = SCNNode()
+        leftCameraNode = SCNNode()
         leftCameraNode.camera = leftCamera
         leftCameraNode.position = SCNVector3(x: camX - 0.5, y: camY, z: camZ)
 
-        let rightCameraNode = SCNNode()
+        rightCameraNode = SCNNode()
         rightCameraNode.camera = rightCamera
         rightCameraNode.position = SCNVector3(x: camX + 0.5, y: camY, z: camZ)
 
@@ -134,6 +138,9 @@ class JFVrPlayerLayerView: UIView {
         
         leftSceneView.pointOfView = leftCameraNode
         rightSceneView.pointOfView = rightCameraNode
+        
+//        let ligth = SCNLight()
+        
     }
     
     /// Create focal spot
@@ -163,10 +170,18 @@ class JFVrPlayerLayerView: UIView {
 //        plane.firstMaterial?.diffuse.contents =
 //    }
     
-    func addMenu(image: UIImage, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
+    func addMenus(menus: [String]) {
+        for (_, menu) in menus.enumerated() {
+//            let x = Float((menus.count / 2) * -2)
+            let position = SCNVector3(x: 0, y: 10, z: -20)
+            addMenu(image: menu, width: 30, height: 30, position: position, rotation: SCNVector4Zero)
+        }
+    }
+    
+    func addMenu(image: String, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
         let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.isDoubleSided = true
-        plane.firstMaterial?.diffuse.contents = image
+        plane.firstMaterial?.diffuse.contents = UIImage(named: image)
         plane.firstMaterial?.diffuse.wrapS = .clamp
         plane.firstMaterial?.diffuse.wrapT = .clamp
         plane.firstMaterial?.diffuse.mipFilter = .nearest
@@ -174,10 +189,24 @@ class JFVrPlayerLayerView: UIView {
         plane.firstMaterial?.shininess = 0.0
         
         let node = SCNNode()
+        node.physicsBody = SCNPhysicsBody.static()
+        node.physicsBody?.restitution = 1.0
         node.geometry = plane
         node.position = position
-        node.rotation = rotation
+//        node.rotation = rotation
+        node.name = image
         scene.rootNode.addChildNode(node)
+    }
+    
+    func focusCollisionDetect() {
+        let hits = leftSceneView.hitTest(leftFocus.center, options: nil)
+        if hits.count > 0 {
+            let result = hits[0]
+            let node = result.node
+            if (node.name == "xiongchumo") {
+                print("ssssss")
+            }
+        }
     }
     
     // MARK: - Configure
@@ -189,6 +218,7 @@ class JFVrPlayerLayerView: UIView {
         }
         
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
+        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(focusCollisionDetect), userInfo: nil, repeats: true)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
         
@@ -219,7 +249,7 @@ class JFVrPlayerLayerView: UIView {
         var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
         transform = SCNMatrix4Translate(transform, 1.0, 1.0, 0.0)
 
-        playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI_2), 0.0, -1.0, 0.0)
+        playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI), 0.0, -1.0, 0.0)
         playerNode?.geometry?.firstMaterial?.diffuse.contentsTransform = transform
         playerNode?.position = SCNVector3(x: 0, y: 0, z: 0)
 
@@ -236,7 +266,15 @@ class JFVrPlayerLayerView: UIView {
     }
     
     func prepareToDeinit() {
+//        motionManager.stopDeviceMotionUpdates()
+        
         resetPlayer()
+        
+        timer?.invalidate()
+        timer = nil
+        
+        focusDetectionTimer?.invalidate()
+        focusDetectionTimer = nil
     }
     
     // MARK: - Layout
@@ -253,11 +291,21 @@ class JFVrPlayerLayerView: UIView {
             leftSceneView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
             leftFocus.frame = CGRect(x: bounds.width / 2 - 24, y: bounds.height / 2 - 24, width: 48, height: 48)
         }
-        
     }
     
-    func updateUI() {
+    func updateUI(isForFullScreen: Bool) {
+        
+        isFullScreen = isForFullScreen
         setNeedsLayout()
+        
+//        if (isFullScreen) {
+//            print("xxx")
+//            playerNode?.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
+//        } else {
+//            print("sss")
+//            playerNode?.rotation = SCNVector4Zero
+//            
+//        }
     }
     
     func switchMode() {
@@ -314,9 +362,6 @@ class JFVrPlayerLayerView: UIView {
         playerNode?.removeFromParentNode()
         playerNode = nil
         isPlayToEnd = true
-        
-        timer?.invalidate()
-        timer = nil
     }
     
     func playerTimerAction() {
@@ -373,11 +418,13 @@ extension JFVrPlayerLayerView: SCNSceneRendererDelegate {
             if let mm = self.motionManager, let motion = mm.deviceMotion {
                 
                 let currentAttitude = motion.attitude
+
+//                var orientationMuliplier = 1.0
+//                if UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.landscapeRight {
+//                    orientationMuliplier = -1.0
+//                }
                 
-                var orientationMuliplier = 1.0
-                if UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.landscapeRight {
-                    orientationMuliplier = -1.0
-                }
+//                print(orientationMuliplier)
                 
                 self.leftCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
                 self.rightCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
