@@ -155,6 +155,31 @@ class JFVrPlayerLayerView: UIView {
         debugPrint("JFPlayerLayerView -- deinit")
     }
     
+    // MARK: - Public methods
+
+//    func addMenu(url: URL, width: CGFloat, height: CGFloat) {
+//        let plane = SCNPlane(width: width, height: height)
+//        plane.firstMaterial?.isDoubleSided = true
+//        plane.firstMaterial?.diffuse.contents =
+//    }
+    
+    func addMenu(image: UIImage, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
+        let plane = SCNPlane(width: width, height: height)
+        plane.firstMaterial?.isDoubleSided = true
+        plane.firstMaterial?.diffuse.contents = image
+        plane.firstMaterial?.diffuse.wrapS = .clamp
+        plane.firstMaterial?.diffuse.wrapT = .clamp
+        plane.firstMaterial?.diffuse.mipFilter = .nearest
+        plane.firstMaterial?.locksAmbientWithDiffuse = true
+        plane.firstMaterial?.shininess = 0.0
+        
+        let node = SCNNode()
+        node.geometry = plane
+        node.position = position
+        node.rotation = rotation
+        scene.rootNode.addChildNode(node)
+    }
+    
     // MARK: - Configure
     
     func configurePlayer() {

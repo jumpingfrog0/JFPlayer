@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import SceneKit
 
 class JFVrPlayer: UIView {
     
@@ -67,7 +67,7 @@ class JFVrPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
-//        playerLayer.initFocus()
+//        playerLayer.addMenu(image: UIImage(named: "xiongchumo")!, width: 100, height: 100, position: SCNVector3(0, 0 , 10), rotation: SCNVector4(x: 0, y: 1, z: 0, w: -Float(M_PI_2)))
         play()
     }
     
@@ -195,10 +195,10 @@ class JFVrPlayer: UIView {
             fullScreenButtonPressed(nil)
         } else {
             playerLayer.prepareToDeinit()
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-//                self.backClosure?()
-//            })
-            self.backClosure?()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                self.backClosure?()
+            })
+//            self.backClosure?()
         }
     }
     
