@@ -6,6 +6,8 @@
 //  Copyright © 2016年 kankan. All rights reserved.
 //
 
+//http://stackoverflow.com/questions/29252418/how-to-play-360-video-on-the-ios-device
+
 import UIKit
 import QuartzCore
 import SceneKit
@@ -138,8 +140,6 @@ class JFVrPlayerLayerView: UIView {
         
         leftSceneView.pointOfView = leftCameraNode
         rightSceneView.pointOfView = rightCameraNode
-        
-//        let ligth = SCNLight()
         
     }
     
@@ -298,14 +298,23 @@ class JFVrPlayerLayerView: UIView {
         isFullScreen = isForFullScreen
         setNeedsLayout()
         
-//        if (isFullScreen) {
-//            print("xxx")
-//            playerNode?.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
-//        } else {
-//            print("sss")
-//            playerNode?.rotation = SCNVector4Zero
-//            
-//        }
+        // Flip video upside down, so that it's shown in the right position
+        if (isFullScreen) {
+            
+            var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
+            transform = SCNMatrix4Translate(transform, 1.0, 1.0, 0.0)
+            
+            playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI_2), 0.0, 1.0, 0.0)
+            playerNode?.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+            
+        } else {
+            var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
+            transform = SCNMatrix4Translate(transform, 1.0, 1.0, 0.0)
+            
+            playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI), 0.0, -1.0, 0.0)
+            playerNode?.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+            
+        }
     }
     
     func switchMode() {
@@ -419,21 +428,28 @@ extension JFVrPlayerLayerView: SCNSceneRendererDelegate {
                 
                 let currentAttitude = motion.attitude
 
-//                var orientationMuliplier = 1.0
-//                if UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.landscapeRight {
-//                    orientationMuliplier = -1.0
-//                }
+                if UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.landscapeRight {
+                    
+                    self.leftCameraRollNode.eulerAngles.z = Float(currentAttitude.pitch)
+                    self.rightCameraRollNode.eulerAngles.z = Float(currentAttitude.pitch)
+                    
+                    self.leftCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)
+                    self.rightCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)
+                    
+                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    
+                } else {
                 
-//                print(orientationMuliplier)
-                
-                self.leftCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
-                self.rightCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
-                
-                self.leftCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
-                self.rightCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
-                
-                self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
-                self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    self.leftCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
+                    self.rightCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
+                    
+                    self.leftCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
+                    self.rightCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
+                    
+                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                }
             }
         }
     }
