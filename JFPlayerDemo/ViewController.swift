@@ -12,6 +12,8 @@ class ViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        UIApplication.shared.isStatusBarHidden = true
     }
 
 }

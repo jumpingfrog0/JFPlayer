@@ -126,7 +126,7 @@ class JFTimeSlider: UISlider {
         loadingIndicator.type = configuration.loaderType
         loadingIndicator.color = configuration.tintColor
         
-        addSubview(replayButton)
+        mainMaskView.addSubview(replayButton)
         replayButton.isHidden = true
         replayButton.setImage(JFImageResourcePath("BMplayer_replay"), for: .normal)
         replayButton.addTarget(self, action: #selector(pressedReplayButton(_:)), for: .touchUpInside)

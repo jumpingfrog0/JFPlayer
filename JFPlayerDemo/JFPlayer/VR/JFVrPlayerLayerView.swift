@@ -171,10 +171,10 @@ class JFVrPlayerLayerView: UIView {
 //    }
     
     func addMenus(menus: [String]) {
-        for (_, menu) in menus.enumerated() {
-//            let x = Float((menus.count / 2) * -2)
-            let position = SCNVector3(x: 0, y: 10, z: -20)
-            addMenu(image: menu, width: 30, height: 30, position: position, rotation: SCNVector4Zero)
+        for (idx, menu) in menus.enumerated() {
+            let x = Float((menus.count / 2)) * (-10) + Float(idx) * (10 + 1)
+            let position = SCNVector3(x: x, y: 0, z: -15)
+            addMenu(image: menu, width: 18, height: 10, position: position, rotation: SCNVector4Zero)
         }
     }
     
@@ -266,7 +266,7 @@ class JFVrPlayerLayerView: UIView {
     }
     
     func prepareToDeinit() {
-//        motionManager.stopDeviceMotionUpdates()
+        motionManager.stopDeviceMotionUpdates()
         
         resetPlayer()
         
@@ -367,7 +367,6 @@ class JFVrPlayerLayerView: UIView {
         
         playerItem = nil
         videoNode?.removeFromParent()
-        videoNode = nil
         playerNode?.removeFromParentNode()
         playerNode = nil
         isPlayToEnd = true
@@ -423,8 +422,8 @@ extension JFVrPlayerLayerView: SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // Render the scene
         
-        DispatchQueue.main.async {
-            if let mm = self.motionManager, let motion = mm.deviceMotion {
+        if let mm = self.motionManager, let motion = mm.deviceMotion {
+            DispatchQueue.main.async {
                 
                 let currentAttitude = motion.attitude
 

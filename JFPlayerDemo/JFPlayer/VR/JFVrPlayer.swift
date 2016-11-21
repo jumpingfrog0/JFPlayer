@@ -69,7 +69,7 @@ class JFVrPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
-        playerLayer.addMenus(menus: ["xiongchumo"])
+        playerLayer.addMenus(menus: ["xiongchumo", "xiongchumo", "xiongchumo"])
         play()
     }
     
@@ -198,10 +198,7 @@ class JFVrPlayer: UIView {
             fullScreenButtonPressed(nil)
         } else {
             playerLayer.prepareToDeinit()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                self.backClosure?()
-            })
-//            self.backClosure?()
+            self.backClosure?()
         }
     }
     
