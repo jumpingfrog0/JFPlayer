@@ -46,7 +46,6 @@ class JFPlayerLayerView: UIView {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
         debugPrint("JFPlayerLayerView -- deinit")
     }
     
@@ -89,6 +88,8 @@ class JFPlayerLayerView: UIView {
         
         timer?.invalidate()
         timer = nil
+        
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
     func playerTimerAction() {
@@ -133,5 +134,6 @@ class JFPlayerLayerView: UIView {
         isPlaying = false
         status = .playToEnd
         delegate?.playerLayerView(playerLayerView: self, statusDidChange: status)
+        print("xxxxx")
     }
 }

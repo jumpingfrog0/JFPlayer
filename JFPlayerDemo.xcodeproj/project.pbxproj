@@ -26,6 +26,7 @@
 		08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE61DDB034B00B855EF /* BaseViewController.swift */; };
 		08BDA76F1DD9668E00E192A8 /* JFPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */; };
 		08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */; };
+		08E4522B1DE34FEC005F7CE5 /* demo.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 08E4522A1DE34FEC005F7CE5 /* demo.m4v */; };
 		08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */; };
 		08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */; };
 		08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */; };
@@ -77,6 +78,7 @@
 		08939CE61DDB034B00B855EF /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerItem.swift; sourceTree = "<group>"; };
 		08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayViewController.swift; sourceTree = "<group>"; };
+		08E4522A1DE34FEC005F7CE5 /* demo.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = demo.m4v; sourceTree = "<group>"; };
 		08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootNavigationController.swift; sourceTree = "<group>"; };
 		08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JFPlayer.bundle; sourceTree = "<group>"; };
 		08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerConfiguration.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 		088758AB1DDCAD6500C47E78 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				08E4522A1DE34FEC005F7CE5 /* demo.m4v */,
 				088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */,
 			);
 			path = Resources;
@@ -314,7 +317,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = kankan;
 				TargetAttributes = {
 					080567FF1DD8D72A006D6A03 = {
@@ -365,6 +368,7 @@
 				08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */,
 				0805680E1DD8D72B006D6A03 /* LaunchScreen.storyboard in Resources */,
 				0805680B1DD8D72B006D6A03 /* Assets.xcassets in Resources */,
+				08E4522B1DE34FEC005F7CE5 /* demo.m4v in Resources */,
 				080568091DD8D72B006D6A03 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -527,6 +531,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -577,6 +582,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -606,6 +612,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14C37095A29514F683E49425 /* Pods-JFPlayerDemo.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
@@ -621,6 +628,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4E1AFBB4332A3E74C16692F0 /* Pods-JFPlayerDemo.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;

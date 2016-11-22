@@ -14,6 +14,7 @@ class JFVrPlayer: UIView {
     var backClosure: (() -> Void)?
     
     var menus: [String]?
+    var episodes: [JFPlayerItem]?
     
 //    var videoItem: JFPlayerItem!
     var playerLayer: JFVrPlayerLayerView!
@@ -69,7 +70,6 @@ class JFVrPlayer: UIView {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
-        playerLayer.addMenus(menus: ["xiongchumo", "xiongchumo", "xiongchumo"])
         play()
     }
     
@@ -285,10 +285,18 @@ extension JFVrPlayer: JFVrPlayerLayerViewDelegate {
     func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, statusDidChange status: JFPlayerStatus) {
         switch status {
         case .playToEnd:
-            controlView.showPlayToEndView()
+//            controlView.showPlayToEndView()
+            if let episodes = episodes {
+                playerLayer.showEpisodes(episodes: episodes)
+            }
         default:
             break
         }
+    }
+    
+    func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, shouldPlayNextItem item: JFPlayerItem) {
+        playerLayer.resetPlayer()
+        playWithUrl(item.resource[0].videoUrl, title: item.title)
     }
 }
 

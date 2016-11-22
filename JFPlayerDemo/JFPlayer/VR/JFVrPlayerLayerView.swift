@@ -38,6 +38,7 @@ class JFVrPlayerLayerView: UIView {
 
     // Player
     var videoUrl: URL?
+    var episodes: [JFPlayerItem]?
     fileprivate var playerItem: AVPlayerItem?
     fileprivate var videoNode: SKVideoNode?
     var playerNode: SCNNode?
@@ -78,6 +79,7 @@ class JFVrPlayerLayerView: UIView {
 
         leftSceneView = SCNView()
         addSubview(leftSceneView)
+        leftSceneView.showsStatistics = true
 
         rightSceneView = SCNView()
         addSubview(rightSceneView)
@@ -141,6 +143,10 @@ class JFVrPlayerLayerView: UIView {
         leftSceneView.pointOfView = leftCameraNode
         rightSceneView.pointOfView = rightCameraNode
         
+        // respond to user head movement. Refreshes the position of the camera 60 times per second.
+        motionManager = CMMotionManager()
+        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical)
     }
     
     /// Create focal spot
@@ -158,30 +164,84 @@ class JFVrPlayerLayerView: UIView {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
         debugPrint("JFPlayerLayerView -- deinit")
     }
     
-    // MARK: - Public methods
-
-//    func addMenu(url: URL, width: CGFloat, height: CGFloat) {
-//        let plane = SCNPlane(width: width, height: height)
-//        plane.firstMaterial?.isDoubleSided = true
-//        plane.firstMaterial?.diffuse.contents =
-//    }
+    // MARK: - Configure
     
-    func addMenus(menus: [String]) {
-        for (idx, menu) in menus.enumerated() {
-            let x = Float((menus.count / 2)) * (-10) + Float(idx) * (10 + 1)
-            let position = SCNVector3(x: x, y: 0, z: -15)
-            addMenu(image: menu, width: 18, height: 10, position: position, rotation: SCNVector4Zero)
+    func configurePlayer() {
+        
+        guard let url = videoUrl else {
+            return
+        }
+        
+        playerItem = AVPlayerItem(url: url)
+        player  = AVPlayer(playerItem: playerItem)
+        videoNode = SKVideoNode(avPlayer: player!)
+        
+        let spriteKitScene = SKScene(size: CGSize(width: 2500, height: 2500))
+        spriteKitScene.scaleMode = .aspectFit
+        
+        videoNode?.position = CGPoint(x: spriteKitScene.size.width / 2.0, y: spriteKitScene.size.height / 2.0)
+        videoNode?.size = spriteKitScene.size
+        spriteKitScene.addChild(videoNode!)
+        
+        playerNode = SCNNode()
+        playerNode?.geometry = SCNSphere(radius: 30)
+        playerNode?.geometry?.firstMaterial?.diffuse.contents = spriteKitScene
+        playerNode?.geometry?.firstMaterial?.isDoubleSided = true
+        scene.rootNode.addChildNode(playerNode!)
+        
+        // Flip video upside down, so that it's shown in the right position
+        var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
+        transform = SCNMatrix4Translate(transform, 1.0, 1.0, 0.0)
+        
+        playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI), 0.0, -1.0, 0.0)
+        playerNode?.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+        playerNode?.position = SCNVector3(x: 0, y: 0, z: 0)
+        
+        // the other way to flip viedo upside down
+        //        playerNode.geometry?.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(1,-1,1)
+        //        playerNode.geometry?.firstMaterial?.diffuse.wrapT = .repeat
+        
+        // the other way to flip viedo upside down
+        //        var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
+        //        transform = SCNMatrix4Rotate(transform, Float(M_PI), 0, 1, 0)
+        //        playerNode.transform = transform
+        
+        switchToNormalMode()
+        
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
+        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(focusCollisionDetect), userInfo: nil, repeats: true)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
+    }
+    
+    func prepareToDeinit() {
+        motionManager.stopDeviceMotionUpdates()
+        resetPlayer()
+    }
+    
+    // MARK: - Public methods
+    
+    func showEpisodes(episodes: [JFPlayerItem]) {
+        
+        // FIXME: The function `playerDidPlayToEnd` call multiple times
+        if self.episodes == nil {
+            self.episodes = episodes
+            
+            for (idx, item) in episodes.enumerated() {
+                let x = Float((episodes.count / 2)) * (-18) + Float(idx) * (18 + 1)
+                let position = SCNVector3(x: x, y: 0, z: -15)
+                addEpisodeItem(item: item, width: 18, height: 10, position: position, rotation: SCNVector4Zero)
+            }
         }
     }
     
-    func addMenu(image: String, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
+    func addEpisodeItem(item: JFPlayerItem, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
         let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.isDoubleSided = true
-        plane.firstMaterial?.diffuse.contents = UIImage(named: image)
+        plane.firstMaterial?.diffuse.contents = UIImage(named: item.cover)
         plane.firstMaterial?.diffuse.wrapS = .clamp
         plane.firstMaterial?.diffuse.wrapT = .clamp
         plane.firstMaterial?.diffuse.mipFilter = .nearest
@@ -193,88 +253,29 @@ class JFVrPlayerLayerView: UIView {
         node.physicsBody?.restitution = 1.0
         node.geometry = plane
         node.position = position
-//        node.rotation = rotation
-        node.name = image
+        //        node.rotation = rotation
+        node.name = item.title
         scene.rootNode.addChildNode(node)
     }
     
     func focusCollisionDetect() {
+        
+        guard let episodes = episodes else {
+            return
+        }
+        
         let hits = leftSceneView.hitTest(leftFocus.center, options: nil)
         if hits.count > 0 {
             let result = hits[0]
             let node = result.node
-            if (node.name == "xiongchumo") {
-                print("ssssss")
+            // TODO: - change `for` to `Map` -
+            for episode in episodes {
+                if episode.title == node.name {
+                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
+                    break
+                }
             }
         }
-    }
-    
-    // MARK: - Configure
-    
-    func configurePlayer() {
-        
-        guard let url = videoUrl else {
-            return
-        }
-        
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
-        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(focusCollisionDetect), userInfo: nil, repeats: true)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
-        
-        // respond to user head movement. Refreshes the position of the camera 60 times per second.
-        motionManager = CMMotionManager()
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
-        motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical)
-        
-
-        playerItem = AVPlayerItem(url: url)
-        player  = AVPlayer(playerItem: playerItem)
-        videoNode = SKVideoNode(avPlayer: player!)
-
-        let spriteKitScene = SKScene(size: CGSize(width: 2500, height: 2500))
-        spriteKitScene.scaleMode = .aspectFit
-
-        videoNode?.position = CGPoint(x: spriteKitScene.size.width / 2.0, y: spriteKitScene.size.height / 2.0)
-        videoNode?.size = spriteKitScene.size
-        spriteKitScene.addChild(videoNode!)
-
-        playerNode = SCNNode()
-        playerNode?.geometry = SCNSphere(radius: 30)
-        playerNode?.geometry?.firstMaterial?.diffuse.contents = spriteKitScene
-        playerNode?.geometry?.firstMaterial?.isDoubleSided = true
-        scene.rootNode.addChildNode(playerNode!)
-
-        // Flip video upside down, so that it's shown in the right position
-        var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
-        transform = SCNMatrix4Translate(transform, 1.0, 1.0, 0.0)
-
-        playerNode?.pivot = SCNMatrix4MakeRotation(Float(M_PI), 0.0, -1.0, 0.0)
-        playerNode?.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-        playerNode?.position = SCNVector3(x: 0, y: 0, z: 0)
-
-        // the other way to flip viedo upside down
-        //        playerNode.geometry?.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(1,-1,1)
-        //        playerNode.geometry?.firstMaterial?.diffuse.wrapT = .repeat
-        
-        // the other way to flip viedo upside down
-        //        var transform = SCNMatrix4MakeRotation(Float(M_PI), 0.0, 0.0, 1.0)
-        //        transform = SCNMatrix4Rotate(transform, Float(M_PI), 0, 1, 0)
-        //        playerNode.transform = transform
-        
-        switchToNormalMode()
-    }
-    
-    func prepareToDeinit() {
-        motionManager.stopDeviceMotionUpdates()
-        
-        resetPlayer()
-        
-        timer?.invalidate()
-        timer = nil
-        
-        focusDetectionTimer?.invalidate()
-        focusDetectionTimer = nil
     }
     
     // MARK: - Layout
@@ -366,10 +367,31 @@ class JFVrPlayerLayerView: UIView {
         pause()
         
         playerItem = nil
+        player?.replaceCurrentItem(with: nil)
+        player = nil
         videoNode?.removeFromParent()
         playerNode?.removeFromParentNode()
         playerNode = nil
         isPlayToEnd = true
+        
+        timer?.invalidate()
+        timer = nil
+        focusDetectionTimer?.invalidate()
+        focusDetectionTimer = nil
+        
+        // remove episodes
+        if let _ = episodes {
+            for item in episodes! {
+                let episodeNode = scene.rootNode.childNode(withName: item.title, recursively: false)
+                episodeNode?.removeFromParentNode()
+            }
+        }
+        
+        episodes?.removeAll()
+        episodes = nil
+        
+        // remove notification observer
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
     func playerTimerAction() {
@@ -410,9 +432,10 @@ class JFVrPlayerLayerView: UIView {
     }
     
     func playerDidPlayToEnd(_ notification: Notification) {
+        pause()
         isPlayToEnd = true
-        isPlaying = false
         status = .playToEnd
+        
         delegate?.vrPlayerLayerView(vrPlayerLayerView: self, statusDidChange: status)
     }
 }

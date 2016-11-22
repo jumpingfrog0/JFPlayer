@@ -78,4 +78,12 @@ protocol JFVrPlayerLayerViewDelegate: class {
     /// - parameter vrPlayerLayerView: the view of vr player layer
     /// - parameter status:          the status of player item
     func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, statusDidChange status: JFPlayerStatus)
+    
+    
+    /// Call this method when will play next video
+    ///
+    /// - Parameters:
+    ///   - vrPlayerLayerView: the view of vr player layer
+    ///   - name: the next video item
+    func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, shouldPlayNextItem item: JFPlayerItem)
 }
