@@ -415,6 +415,7 @@ class JFVrPlayerLayerView: UIView {
     func onTimeSliderEnd() {
         if player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
             timer?.fireDate = Date()
+            pause()
         }
     }
     

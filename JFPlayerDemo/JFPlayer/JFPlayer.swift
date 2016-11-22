@@ -234,8 +234,8 @@ class JFPlayer: UIView {
     
     func progressSliderTouchEnded(_ slider: JFTimeSlider) {
         let target = totalDuration * TimeInterval(slider.value)
-        playerLayer.seekToTime(target, completionHandler: nil)
         playerLayer.onTimeSliderEnd()
+        playerLayer.seekToTime(target, completionHandler: nil)
         play()
     }
     
