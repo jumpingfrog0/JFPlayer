@@ -16,7 +16,6 @@ class JFVrPlayer: UIView {
     var menus: [String]?
     var episodes: [JFPlayerItem]?
     
-//    var videoItem: JFPlayerItem!
     var playerLayer: JFVrPlayerLayerView!
     var controlView: JFPlayerControlView!
     

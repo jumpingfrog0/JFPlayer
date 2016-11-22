@@ -79,7 +79,6 @@ class JFVrPlayerLayerView: UIView {
 
         leftSceneView = SCNView()
         addSubview(leftSceneView)
-        leftSceneView.showsStatistics = true
 
         rightSceneView = SCNView()
         addSubview(rightSceneView)
@@ -88,6 +87,7 @@ class JFVrPlayerLayerView: UIView {
         rightSceneView.scene = scene
         
         leftSceneView.delegate = self
+        leftSceneView.allowsCameraControl = true
     }
     
     
@@ -139,6 +139,7 @@ class JFVrPlayerLayerView: UIView {
         rightCameraYawNode.addChildNode(rightCameraPitchNode)
         
         scene.rootNode.addChildNode(leftCameraYawNode)
+//        scene.rootNode.addChildNode(leftCameraNode)
         
         leftSceneView.pointOfView = leftCameraNode
         rightSceneView.pointOfView = rightCameraNode
@@ -228,12 +229,34 @@ class JFVrPlayerLayerView: UIView {
         
         // FIXME: The function `playerDidPlayToEnd` call multiple times
         if self.episodes == nil {
+            
             self.episodes = episodes
             
+            let half = episodes.count / 2
+            let distance = 5
             for (idx, item) in episodes.enumerated() {
-                let x = Float((episodes.count / 2)) * (-18) + Float(idx) * (18 + 1)
-                let position = SCNVector3(x: x, y: 0, z: -15)
-                addEpisodeItem(item: item, width: 18, height: 10, position: position, rotation: SCNVector4Zero)
+                
+                if (idx >= half) {
+                    
+                    let x = Float(distance / 2 + 2 + (distance + 2) * (idx - half))
+                    let position = SCNVector3(x: x, y: 0, z: -5)
+                    let rotation = SCNVector4Make(0, 1, 0, -Float(M_PI * 30.0 / 180.0))
+//                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: SCNVector4Zero)
+                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
+                    
+                    print(x)
+                    
+                } else {
+                    
+                    let x = Float((-(distance / 2 + 2) - distance) - (distance + 2) * idx)
+                    let position = SCNVector3(x: x, y: 0, z: -5)
+                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * 30.0 / 180.0))
+//                    addEpisodeItem(item: item, width: CGFloat(distance), height: 4, position: position, rotation: SCNVector4Zero)
+                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
+                    print(x)
+                }
+                
+                
             }
         }
     }
@@ -253,7 +276,7 @@ class JFVrPlayerLayerView: UIView {
         node.physicsBody?.restitution = 1.0
         node.geometry = plane
         node.position = position
-        //        node.rotation = rotation
+        node.rotation = rotation
         node.name = item.title
         scene.rootNode.addChildNode(node)
     }
@@ -271,7 +294,7 @@ class JFVrPlayerLayerView: UIView {
             // TODO: - change `for` to `Map` -
             for episode in episodes {
                 if episode.title == node.name {
-                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
+//                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
                     break
                 }
             }
