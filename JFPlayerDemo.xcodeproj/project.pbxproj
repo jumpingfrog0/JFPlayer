@@ -323,7 +323,7 @@
 					080567FF1DD8D72A006D6A03 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 9P25B7FGHC;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					080568131DD8D72B006D6A03 = {
 						CreatedOnToolsVersion = 8.0;
@@ -614,12 +614,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.vrplayer.JFPlayerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.JFPlayerDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "84cb9475-5e74-45ca-930b-39d7b6b3c218";
+				PROVISIONING_PROFILE_SPECIFIER = wild.dev;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -630,12 +633,15 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.vrplayer.JFPlayerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.JFPlayerDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "61c899a6-5061-4dc1-8b3f-bb5fee647eea";
+				PROVISIONING_PROFILE_SPECIFIER = wild.adhoc;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

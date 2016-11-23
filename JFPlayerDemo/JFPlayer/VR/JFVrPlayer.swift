@@ -284,7 +284,6 @@ extension JFVrPlayer: JFVrPlayerLayerViewDelegate {
     func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, statusDidChange status: JFPlayerStatus) {
         switch status {
         case .playToEnd:
-//            controlView.showPlayToEndView()
             if let episodes = episodes {
                 playerLayer.showEpisodes(episodes: episodes)
             }

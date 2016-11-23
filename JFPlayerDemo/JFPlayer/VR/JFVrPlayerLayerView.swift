@@ -300,7 +300,7 @@ class JFVrPlayerLayerView: UIView {
             // TODO: - change `for` to `Map` -
             for episode in episodes {
                 if episode.title == node.name {
-//                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
+                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
                     break
                 }
             }
