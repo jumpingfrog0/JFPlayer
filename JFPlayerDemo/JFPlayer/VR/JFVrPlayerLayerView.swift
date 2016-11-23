@@ -139,7 +139,6 @@ class JFVrPlayerLayerView: UIView {
         rightCameraYawNode.addChildNode(rightCameraPitchNode)
         
         scene.rootNode.addChildNode(leftCameraYawNode)
-//        scene.rootNode.addChildNode(leftCameraNode)
         
         leftSceneView.pointOfView = leftCameraNode
         rightSceneView.pointOfView = rightCameraNode
@@ -240,8 +239,7 @@ class JFVrPlayerLayerView: UIView {
                     
                     let x = Float(distance / 2 + 2 + (distance + 2) * (idx - half))
                     let position = SCNVector3(x: x, y: 0, z: -5)
-                    let rotation = SCNVector4Make(0, 1, 0, -Float(M_PI * 30.0 / 180.0))
-//                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: SCNVector4Zero)
+                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * Double(idx) / 4.0))
                     addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
                     
                     print(x)
@@ -250,18 +248,20 @@ class JFVrPlayerLayerView: UIView {
                     
                     let x = Float((-(distance / 2 + 2) - distance) - (distance + 2) * idx)
                     let position = SCNVector3(x: x, y: 0, z: -5)
-                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * 30.0 / 180.0))
-//                    addEpisodeItem(item: item, width: CGFloat(distance), height: 4, position: position, rotation: SCNVector4Zero)
+                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * Double(idx) / 4.0))
                     addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
                     print(x)
                 }
-                
-                
             }
         }
     }
     
     func addEpisodeItem(item: JFPlayerItem, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
+        
+//        let episodeNode = SCNNode()
+//        episodeNode.position = SCNVector3(x: 0, y: 0, z: -5)
+//        scene.rootNode.addChildNode(episodeNode)
+        
         let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.isDoubleSided = true
         plane.firstMaterial?.diffuse.contents = UIImage(named: item.cover)
@@ -276,9 +276,15 @@ class JFVrPlayerLayerView: UIView {
         node.physicsBody?.restitution = 1.0
         node.geometry = plane
         node.position = position
-        node.rotation = rotation
+//        node.rotation = rotation
         node.name = item.title
         scene.rootNode.addChildNode(node)
+//        episodeNode.addChildNode(node)
+//        
+//        print(rotation.w)
+//        
+//        let rotate = SCNAction.rotate(by: CGFloat(M_PI_2), around: SCNVector3(x: 0, y: 1, z: 0), duration: 0.1)
+//        episodeNode.runAction(rotate)
     }
     
     func focusCollisionDetect() {

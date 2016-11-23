@@ -225,6 +225,7 @@ class JFTimeSlider: UISlider {
         topBar.alpha = 1.0
         bottomBar.alpha = 1.0
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
+        isHidden = false
     }
     
     func hideUIComponents() {
@@ -232,6 +233,7 @@ class JFTimeSlider: UISlider {
         topBar.alpha = 0.0
         bottomBar.alpha = 0.0
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        isHidden = true
     }
     
     func showPlayToEndView() {
