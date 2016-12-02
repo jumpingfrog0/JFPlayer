@@ -226,31 +226,28 @@ class JFVrPlayerLayerView: UIView {
     
     func showEpisodes(episodes: [JFPlayerItem]) {
         
+        let distance = CGFloat(5)
+        let position = SCNVector3(x: 0, y: 0, z: -5)
+        addReplayNode(width:  distance, height: distance * 9.0 / 16.0, position: position)
+        
         // FIXME: The function `playerDidPlayToEnd` call multiple times
         if self.episodes == nil {
             
             self.episodes = episodes
             
             let half = episodes.count / 2
-            let distance = 5
+            
             for (idx, item) in episodes.enumerated() {
                 
                 if (idx >= half) {
                     
-                    let x = Float(distance / 2 + 2 + (distance + 2) * (idx - half))
-                    let position = SCNVector3(x: x, y: 0, z: -5)
-                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * Double(idx) / 4.0))
-                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
-                    
-                    print(x)
+                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI_2 * 3 * Double(idx - half + 1) / Double(episodes.count)))
+                    addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
                     
                 } else {
-                    
-                    let x = Float((-(distance / 2 + 2) - distance) - (distance + 2) * idx)
-                    let position = SCNVector3(x: x, y: 0, z: -5)
-                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI * Double(idx) / 4.0))
-                    addEpisodeItem(item: item, width: CGFloat(distance), height: 5 * 112.0 / 200.0, position: position, rotation: rotation)
-                    print(x)
+                    let position = SCNVector3(x: 0, y: 0, z: -5)
+                    let rotation = SCNVector4Make(0, 1, 0, -Float(M_PI_2 * 3 * Double(idx + 1) / Double(episodes.count)))
+                    addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
                 }
             }
         }
@@ -258,9 +255,9 @@ class JFVrPlayerLayerView: UIView {
     
     func addEpisodeItem(item: JFPlayerItem, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
         
-//        let episodeNode = SCNNode()
-//        episodeNode.position = SCNVector3(x: 0, y: 0, z: -5)
-//        scene.rootNode.addChildNode(episodeNode)
+        let rotationNode = SCNNode()
+        rotationNode.position = SCNVector3(x: 0, y: 0, z: 0)
+        scene.rootNode.addChildNode(rotationNode)
         
         let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.isDoubleSided = true
@@ -276,15 +273,48 @@ class JFVrPlayerLayerView: UIView {
         node.physicsBody?.restitution = 1.0
         node.geometry = plane
         node.position = position
-//        node.rotation = rotation
         node.name = item.title
+        rotationNode.addChildNode(node)
+        
+        let rotate = SCNAction.rotate(by: CGFloat(rotation.w), around: SCNVector3(x: 0, y: 1, z: 0), duration: 0.0)
+        rotationNode.runAction(rotate)
+    }
+    
+    func addReplayNode(width: CGFloat, height: CGFloat, position: SCNVector3) {
+        
+//        let skScene = SKScene(size: CGSize(width: width, height: height))
+//        skScene.backgroundColor = UIColor.yellow
+//        
+//        let labelNode = SKLabelNode()
+//        labelNode.text = "重播"
+//        labelNode.color = UIColor.green
+//        labelNode.fontSize = 20
+//        labelNode.position = CGPoint(x: width / 2.0, y: height / 2.0)
+//        
+//        skScene.addChild(labelNode)
+        
+        let layer = CALayer()
+        layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        layer.backgroundColor = UIColor.yellow.cgColor
+        
+        let textLayer = CATextLayer()
+        textLayer.frame = layer.bounds
+        textLayer.fontSize = layer.bounds.size.height
+        textLayer.string = "重播"
+        textLayer.alignmentMode = kCAAlignmentCenter
+        textLayer.foregroundColor = UIColor.green.cgColor
+        textLayer.display()
+        layer.addSublayer(textLayer)
+        
+        let plane = SCNPlane(width: width, height: height)
+        plane.firstMaterial?.diffuse.contents = layer
+        plane.firstMaterial?.locksAmbientWithDiffuse = true
+        plane.firstMaterial?.lightingModel = .constant
+        
+        let node = SCNNode()
+        node.geometry = plane
+        node.position = position
         scene.rootNode.addChildNode(node)
-//        episodeNode.addChildNode(node)
-//        
-//        print(rotation.w)
-//        
-//        let rotate = SCNAction.rotate(by: CGFloat(M_PI_2), around: SCNVector3(x: 0, y: 1, z: 0), duration: 0.1)
-//        episodeNode.runAction(rotate)
     }
     
     func focusCollisionDetect() {
