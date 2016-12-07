@@ -35,6 +35,9 @@ class JFVrPlayerLayerView: UIView {
     fileprivate var rightCameraRollNode: SCNNode!
     fileprivate var rightCameraPitchNode: SCNNode!
     fileprivate var rightCameraYawNode: SCNNode!
+    
+    // Control Bar
+    fileprivate var controlBar: JFVrPlayerControlBar!
 
     // Player
     var videoUrl: URL?
@@ -51,11 +54,18 @@ class JFVrPlayerLayerView: UIView {
     var timer: Timer?
     var focusDetectionTimer: Timer?
     
+    // Boolean
     var isVrMode = true
     var isPlaying = false
     var isPlayToEnd = false
     var status: JFPlayerStatus = .unknown
     var isFullScreen = false
+    var motionEnable = true
+    var focusIsLoading = false
+    
+    fileprivate var pitchSum: Float = 0.0
+    fileprivate var yawSum: Float = 0.0
+    fileprivate var preHitNode: SCNNode?
     
     // MARK: - Initialize
     
@@ -64,6 +74,8 @@ class JFVrPlayerLayerView: UIView {
         initScenes()
         initCameras()
         initFocus()
+        initGesture()
+        initControlBar()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -71,6 +83,8 @@ class JFVrPlayerLayerView: UIView {
         initScenes()
         initCameras()
         initFocus()
+        initGesture()
+        initControlBar()
     }
     
     /// create sences
@@ -78,16 +92,18 @@ class JFVrPlayerLayerView: UIView {
         scene = SCNScene()
 
         leftSceneView = SCNView()
+        leftSceneView.backgroundColor = UIColor.black
         addSubview(leftSceneView)
 
         rightSceneView = SCNView()
+        rightSceneView.backgroundColor = UIColor.black
         addSubview(rightSceneView)
 
         leftSceneView.scene = scene
         rightSceneView.scene = scene
         
         leftSceneView.delegate = self
-        leftSceneView.allowsCameraControl = true
+        leftSceneView.showsStatistics = true
     }
     
     
@@ -149,18 +165,40 @@ class JFVrPlayerLayerView: UIView {
         motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical)
     }
     
+    func initGesture() {
+        addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
+    }
+    
     /// Create focal spot
     func initFocus() {
         
-        leftFocus = UIImageView(image: JFImageResourcePath("selecting-vr_00000"))
+        leftFocus = UIImageView(image: JFImageResourcePath("vr_select/selecting-vr_00000"))
         leftFocus.alpha = 0.6
         
         
-        rightFocus = UIImageView(image: JFImageResourcePath("selecting-vr_00000"))
+        rightFocus = UIImageView(image: JFImageResourcePath("vr_select/selecting-vr_00000"))
         rightFocus.alpha = 0.6
         
         insertSubview(leftFocus, at: 10)
         insertSubview(rightFocus, at: 10)
+        
+        // load animation
+        var animationArray = [UIImage]()
+        for i in 0..<60 {
+            let image = JFImageResourcePath("vr_select/selecting-vr_000\(i.format("02"))")
+            animationArray.append(image!)
+        }
+        
+        leftFocus.animationImages = animationArray
+        leftFocus.animationDuration = 1.5
+        leftFocus.animationRepeatCount = .max
+    }
+    
+    /// Create control bar
+    func initControlBar() {
+        controlBar = JFVrPlayerControlBar()
+        scene.rootNode.addChildNode(controlBar!)
+        controlBar.isHidden = true
     }
     
     deinit {
@@ -212,7 +250,7 @@ class JFVrPlayerLayerView: UIView {
         switchToNormalMode()
         
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
-        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(focusCollisionDetect), userInfo: nil, repeats: true)
+        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(detectFocusCollision), userInfo: nil, repeats: true)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
     }
@@ -224,40 +262,114 @@ class JFVrPlayerLayerView: UIView {
     
     // MARK: - Public methods
     
+    func showControlBar() {
+        controlBar.isHidden = false
+    }
+    
+    func hideControlBar() {
+        controlBar.isHidden = true
+    }
+    
     func showEpisodes(episodes: [JFPlayerItem]) {
+        
+        guard self.episodes == nil else {
+            return
+        }
+        
+        self.episodes = episodes
         
         let distance = CGFloat(5)
         let position = SCNVector3(x: 0, y: 0, z: -5)
+        let half = episodes.count / 2
+        
         addReplayNode(width:  distance, height: distance * 9.0 / 16.0, position: position)
         
-        // FIXME: The function `playerDidPlayToEnd` call multiple times
-        if self.episodes == nil {
+        for (idx, item) in episodes.enumerated() {
             
-            self.episodes = episodes
-            
-            let half = episodes.count / 2
-            
-            for (idx, item) in episodes.enumerated() {
+            if (idx >= half) {
                 
-                if (idx >= half) {
-                    
-                    let rotation = SCNVector4Make(0, 1, 0, Float(M_PI_2 * 3 * Double(idx - half + 1) / Double(episodes.count)))
-                    addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
-                    
-                } else {
-                    let position = SCNVector3(x: 0, y: 0, z: -5)
-                    let rotation = SCNVector4Make(0, 1, 0, -Float(M_PI_2 * 3 * Double(idx + 1) / Double(episodes.count)))
-                    addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
-                }
+                let rotation = SCNVector4Make(0, 1, 0, Float(M_PI_2 * 3 * Double(idx - half + 1) / Double(episodes.count)))
+                addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
+                
+            } else {
+                let position = SCNVector3(x: 0, y: 0, z: -5)
+                let rotation = SCNVector4Make(0, 1, 0, -Float(M_PI_2 * 3 * Double(idx + 1) / Double(episodes.count)))
+                addEpisodeItem(item: item, width: distance, height: distance * 9.0 / 16.0, position: position, rotation: rotation)
             }
         }
     }
     
-    func addEpisodeItem(item: JFPlayerItem, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
+    func detectFocusCollision() {
         
-        let rotationNode = SCNNode()
-        rotationNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        scene.rootNode.addChildNode(rotationNode)
+        let hits = leftSceneView.hitTest(leftFocus.center, options: nil)
+        
+        guard hits.count > 0  else {
+            return
+        }
+        
+        let result = hits[0]
+        let node = result.node
+        
+        guard node.name != nil else {
+            preHitNode = node
+            return
+        }
+        
+        guard preHitNode != node else {
+            return
+        }
+        
+        preHitNode = node
+        
+        // focus on episode
+        // TODO: - change `for` to `Map` -
+        if let episodes = episodes {
+            for episode in episodes {
+                if episode.title == node.name {
+                    
+                    startFocusLoading(callback: { [unowned self] in
+                        self.delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
+                    })
+                    break
+                }
+            }
+        }
+        
+        // focus on control bar
+        if node.name == "PlayorPauseButton" {
+            startFocusLoading (callback: { [unowned self] in
+                if self.isPlaying {
+                    self.controlBar.updateUI(shouldPause: true)
+                    self.pause()
+                } else {
+                    self.controlBar.updateUI(shouldPause: false)
+                    self.play()
+                }
+            })
+        }
+    }
+    
+    func startFocusLoading(callback: (() -> Void)?) {
+        if !focusIsLoading {
+            
+            leftFocus.startAnimating()
+            rightFocus.startAnimating()
+            focusIsLoading = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+                
+                self.leftFocus.stopAnimating()
+                self.rightFocus.stopAnimating()
+                self.focusIsLoading = false
+                
+                callback?()
+            })
+        }
+    }
+    
+    // MARK: - Private Method
+    
+    fileprivate func addEpisodeItem(item: JFPlayerItem, width: CGFloat, height: CGFloat, position: SCNVector3, rotation: SCNVector4) {
         
         let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.isDoubleSided = true
@@ -274,24 +386,29 @@ class JFVrPlayerLayerView: UIView {
         node.geometry = plane
         node.position = position
         node.name = item.title
+        
+        let rotationNode = SCNNode()
+        rotationNode.position = SCNVector3(x: 0, y: 0, z: 0)
+        rotationNode.name = item.title
+        scene.rootNode.addChildNode(rotationNode)
         rotationNode.addChildNode(node)
         
         let rotate = SCNAction.rotate(by: CGFloat(rotation.w), around: SCNVector3(x: 0, y: 1, z: 0), duration: 0.0)
         rotationNode.runAction(rotate)
     }
     
-    func addReplayNode(width: CGFloat, height: CGFloat, position: SCNVector3) {
+    fileprivate func addReplayNode(width: CGFloat, height: CGFloat, position: SCNVector3) {
         
-//        let skScene = SKScene(size: CGSize(width: width, height: height))
-//        skScene.backgroundColor = UIColor.yellow
-//        
-//        let labelNode = SKLabelNode()
-//        labelNode.text = "重播"
-//        labelNode.color = UIColor.green
-//        labelNode.fontSize = 20
-//        labelNode.position = CGPoint(x: width / 2.0, y: height / 2.0)
-//        
-//        skScene.addChild(labelNode)
+        //        let skScene = SKScene(size: CGSize(width: width, height: height))
+        //        skScene.backgroundColor = UIColor.yellow
+        //
+        //        let labelNode = SKLabelNode()
+        //        labelNode.text = "重播"
+        //        labelNode.color = UIColor.green
+        //        labelNode.fontSize = 20
+        //        labelNode.position = CGPoint(x: width / 2.0, y: height / 2.0)
+        //
+        //        skScene.addChild(labelNode)
         
         let layer = CALayer()
         layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
@@ -307,6 +424,7 @@ class JFVrPlayerLayerView: UIView {
         layer.addSublayer(textLayer)
         
         let plane = SCNPlane(width: width, height: height)
+        plane.firstMaterial?.isDoubleSided = true
         plane.firstMaterial?.diffuse.contents = layer
         plane.firstMaterial?.locksAmbientWithDiffuse = true
         plane.firstMaterial?.lightingModel = .constant
@@ -314,27 +432,8 @@ class JFVrPlayerLayerView: UIView {
         let node = SCNNode()
         node.geometry = plane
         node.position = position
+        node.name = "Replay"
         scene.rootNode.addChildNode(node)
-    }
-    
-    func focusCollisionDetect() {
-        
-        guard let episodes = episodes else {
-            return
-        }
-        
-        let hits = leftSceneView.hitTest(leftFocus.center, options: nil)
-        if hits.count > 0 {
-            let result = hits[0]
-            let node = result.node
-            // TODO: - change `for` to `Map` -
-            for episode in episodes {
-                if episode.title == node.name {
-                    delegate?.vrPlayerLayerView(vrPlayerLayerView: self, shouldPlayNextItem: episode)
-                    break
-                }
-            }
-        }
     }
     
     // MARK: - Layout
@@ -444,6 +543,8 @@ class JFVrPlayerLayerView: UIView {
                 let episodeNode = scene.rootNode.childNode(withName: item.title, recursively: false)
                 episodeNode?.removeFromParentNode()
             }
+            let replayNode = scene.rootNode.childNode(withName: "Replay", recursively: true)
+            replayNode?.removeFromParentNode()
         }
         
         episodes?.removeAll()
@@ -498,39 +599,70 @@ class JFVrPlayerLayerView: UIView {
         
         delegate?.vrPlayerLayerView(vrPlayerLayerView: self, statusDidChange: status)
     }
+    
+    func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        
+        switch recognizer.state {
+        case .began:
+            motionEnable = false
+            
+        case .changed:
+            motionEnable = false
+            let yawDelta = Float(recognizer.translation(in: recognizer.view).x) / 100.0
+            yawSum += yawDelta
+            leftCameraYawNode.eulerAngles.y -= Float(yawDelta)
+            rightCameraYawNode.eulerAngles.y -= Float(yawDelta)
+            
+            let pitchDelta = Float(recognizer.translation(in: recognizer.view).y) / 100.0
+            pitchSum += pitchDelta
+            leftCameraPitchNode.eulerAngles.x -= Float(pitchDelta)
+            rightCameraPitchNode.eulerAngles.x -= Float(pitchDelta)
+            
+            recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
+            
+        default:
+            motionEnable = true
+        }
+    }
 }
 
 extension JFVrPlayerLayerView: SCNSceneRendererDelegate {
     
+    // Control motion
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        // Render the scene
         
-        if let mm = self.motionManager, let motion = mm.deviceMotion {
+        if let mm = self.motionManager, let motion = mm.deviceMotion, motionEnable == true {
             DispatchQueue.main.async {
                 
                 let currentAttitude = motion.attitude
 
                 if UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.landscapeRight {
                     
-                    self.leftCameraRollNode.eulerAngles.z = Float(currentAttitude.pitch)
-                    self.rightCameraRollNode.eulerAngles.z = Float(currentAttitude.pitch)
+                    self.leftCameraRollNode.eulerAngles.z = Float(-currentAttitude.pitch)
+                    self.rightCameraRollNode.eulerAngles.z = Float(-currentAttitude.pitch)
                     
-                    self.leftCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)
-                    self.rightCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)
+                    self.leftCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)  - self.pitchSum
+                    self.rightCameraPitchNode.eulerAngles.x = Float(-currentAttitude.roll)   - self.pitchSum
                     
-                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
-                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw) - self.yawSum
+                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw) - self.yawSum
                     
                 } else {
-                
+                    
                     self.leftCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
                     self.rightCameraRollNode.eulerAngles.z = Float(-currentAttitude.roll)
                     
-                    self.leftCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
-                    self.rightCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch)
+                    self.leftCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch) - self.pitchSum
+                    self.rightCameraPitchNode.eulerAngles.x = Float(currentAttitude.pitch) - self.pitchSum
                     
-                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
-                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw)
+                    self.leftCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw) - self.yawSum
+                    self.rightCameraYawNode.eulerAngles.y = Float(currentAttitude.yaw) - self.yawSum
+                }
+                
+                if self.leftCameraPitchNode.eulerAngles.x < GLKMathDegreesToRadians(45) {
+                    self.showControlBar()
+                } else {
+                    self.hideControlBar()
                 }
             }
         }

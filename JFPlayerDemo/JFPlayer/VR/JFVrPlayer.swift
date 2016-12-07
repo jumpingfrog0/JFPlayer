@@ -294,7 +294,13 @@ extension JFVrPlayer: JFVrPlayerLayerViewDelegate {
     
     func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, shouldPlayNextItem item: JFPlayerItem) {
         playerLayer.resetPlayer()
-        playWithUrl(item.resource[0].videoUrl, title: item.title)
+        showControlViewAnimated()
+        controlView.showLoader()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+            self.controlView.hideLoader()
+            self.playWithUrl(item.resource[0].videoUrl, title: item.title)
+        })
+        
     }
 }
 

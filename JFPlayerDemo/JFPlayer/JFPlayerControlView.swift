@@ -250,4 +250,14 @@ class JFTimeSlider: UISlider {
             fullScreenButton.setImage(JFImageResourcePath("BMPlayer_fullscreen"), for: .normal)
         }
     }
+    
+    func showLoader() {
+        loadingIndicator.isHidden = false
+        loadingIndicator.startAnimating()
+    }
+    
+    func hideLoader() {
+        loadingIndicator.stopAnimating()
+        loadingIndicator.isHidden = true
+    }
 }

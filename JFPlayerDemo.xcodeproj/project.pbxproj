@@ -24,9 +24,11 @@
 		088758B61DDCBD6600C47E78 /* JFVrPlayerLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */; };
 		08939CE51DD9BE0200B855EF /* UINavigationBar+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */; };
 		08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE61DDB034B00B855EF /* BaseViewController.swift */; };
+		08ACE60B1DF7BC1C00F515D2 /* Number+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */; };
 		08BDA76F1DD9668E00E192A8 /* JFPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */; };
 		08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */; };
 		08E4522B1DE34FEC005F7CE5 /* demo.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 08E4522A1DE34FEC005F7CE5 /* demo.m4v */; };
+		08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F0B5F21DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift */; };
 		08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */; };
 		08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */; };
 		08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */; };
@@ -76,9 +78,11 @@
 		088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayerLayerView.swift; sourceTree = "<group>"; };
 		08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Extend.swift"; sourceTree = "<group>"; };
 		08939CE61DDB034B00B855EF /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Number+Extend.swift"; sourceTree = "<group>"; };
 		08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerItem.swift; sourceTree = "<group>"; };
 		08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayViewController.swift; sourceTree = "<group>"; };
 		08E4522A1DE34FEC005F7CE5 /* demo.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = demo.m4v; sourceTree = "<group>"; };
+		08F0B5F21DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayerControlBar.swift; sourceTree = "<group>"; };
 		08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootNavigationController.swift; sourceTree = "<group>"; };
 		08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JFPlayer.bundle; sourceTree = "<group>"; };
 		08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerConfiguration.swift; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 			children = (
 				088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */,
 				088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */,
+				08F0B5F21DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift */,
 			);
 			path = VR;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */,
 				08FDB4DE1DDC25CE002DB611 /* UIView+Extend.swift */,
 				08FDB4E01DDC34B4002DB611 /* UIApplication+Extend.swift */,
+				08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -443,9 +449,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				088758B41DDCBCF200C47E78 /* JFVrPlayer.swift in Sources */,
+				08ACE60B1DF7BC1C00F515D2 /* Number+Extend.swift in Sources */,
 				080568061DD8D72B006D6A03 /* ViewController.swift in Sources */,
 				080568041DD8D72B006D6A03 /* AppDelegate.swift in Sources */,
 				080568351DD957D2006D6A03 /* JFPlayer.swift in Sources */,
+				08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */,
 				08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */,
 				088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */,
 				080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */,
