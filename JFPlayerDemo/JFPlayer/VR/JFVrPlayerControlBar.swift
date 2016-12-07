@@ -32,7 +32,7 @@ class JFVrPlayerControlBar: SCNNode {
         
         playOrPausePlane = SCNPlane(width: 0.5, height: 0.5)
         playOrPausePlane.firstMaterial?.isDoubleSided = true
-        playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("BMPlayer_pause")
+        playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("JFPlayer_pause")
         playOrPausePlane.firstMaterial?.diffuse.wrapS = .clamp
         playOrPausePlane.firstMaterial?.diffuse.wrapT = .clamp
         playOrPausePlane.firstMaterial?.diffuse.mipFilter = .nearest
@@ -64,9 +64,9 @@ class JFVrPlayerControlBar: SCNNode {
     
     func updateUI(shouldPause: Bool) {
         if shouldPause {
-            playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("BMPlayer_play")
+            playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("JFPlayer_play")
         } else {
-            playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("BMPlayer_pause")
+            playOrPausePlane.firstMaterial?.diffuse.contents = JFImageResourcePath("JFPlayer_pause")
         }
     }
 }

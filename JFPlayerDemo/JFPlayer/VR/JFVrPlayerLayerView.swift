@@ -37,7 +37,7 @@ class JFVrPlayerLayerView: UIView {
     fileprivate var rightCameraYawNode: SCNNode!
     
     // Control Bar
-    fileprivate var controlBar: JFVrPlayerControlBar!
+    fileprivate var controlBar: JFVrPlayerControlBar?
 
     // Player
     var videoUrl: URL?
@@ -65,7 +65,8 @@ class JFVrPlayerLayerView: UIView {
     
     fileprivate var pitchSum: Float = 0.0
     fileprivate var yawSum: Float = 0.0
-    fileprivate var preHitNode: SCNNode?
+    fileprivate var previousHitNode: SCNNode?
+    fileprivate var cameraFox: Double = 70.0
     
     // MARK: - Initialize
     
@@ -75,7 +76,6 @@ class JFVrPlayerLayerView: UIView {
         initCameras()
         initFocus()
         initGesture()
-        initControlBar()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -84,7 +84,6 @@ class JFVrPlayerLayerView: UIView {
         initCameras()
         initFocus()
         initGesture()
-        initControlBar()
     }
     
     /// create sences
@@ -103,7 +102,6 @@ class JFVrPlayerLayerView: UIView {
         rightSceneView.scene = scene
         
         leftSceneView.delegate = self
-        leftSceneView.showsStatistics = true
     }
     
     
@@ -167,6 +165,7 @@ class JFVrPlayerLayerView: UIView {
     
     func initGesture() {
         addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
+        addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:))))
     }
     
     /// Create focal spot
@@ -195,10 +194,14 @@ class JFVrPlayerLayerView: UIView {
     }
     
     /// Create control bar
-    func initControlBar() {
+    func createControlBar() {
         controlBar = JFVrPlayerControlBar()
         scene.rootNode.addChildNode(controlBar!)
-        controlBar.isHidden = true
+    }
+    
+    func removeControlBar() {
+        controlBar?.removeFromParentNode()
+        controlBar = nil
     }
     
     deinit {
@@ -248,9 +251,10 @@ class JFVrPlayerLayerView: UIView {
         //        playerNode.transform = transform
         
         switchToNormalMode()
+        createControlBar()
         
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
-        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(detectFocusCollision), userInfo: nil, repeats: true)
+        focusDetectionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(hitFocus), userInfo: nil, repeats: true)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
     }
@@ -262,12 +266,47 @@ class JFVrPlayerLayerView: UIView {
     
     // MARK: - Public methods
     
+    func resetPlayer() {
+        
+        pause()
+        removeControlBar()
+        
+        playerItem = nil
+        player?.replaceCurrentItem(with: nil)
+        player = nil
+        videoNode?.removeFromParent()
+        playerNode?.removeFromParentNode()
+        playerNode = nil
+        isPlayToEnd = true
+        
+        timer?.invalidate()
+        timer = nil
+        focusDetectionTimer?.invalidate()
+        focusDetectionTimer = nil
+        
+        // remove episodes
+        if let _ = episodes {
+            for item in episodes! {
+                let episodeNode = scene.rootNode.childNode(withName: item.title, recursively: false)
+                episodeNode?.removeFromParentNode()
+            }
+            let replayNode = scene.rootNode.childNode(withName: "Replay", recursively: true)
+            replayNode?.removeFromParentNode()
+        }
+        
+        episodes?.removeAll()
+        episodes = nil
+        
+        // remove notification observer
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+    }
+    
     func showControlBar() {
-        controlBar.isHidden = false
+        controlBar?.isHidden = false
     }
     
     func hideControlBar() {
-        controlBar.isHidden = true
+        controlBar?.isHidden = true
     }
     
     func showEpisodes(episodes: [JFPlayerItem]) {
@@ -299,7 +338,7 @@ class JFVrPlayerLayerView: UIView {
         }
     }
     
-    func detectFocusCollision() {
+    func hitFocus() {
         
         let hits = leftSceneView.hitTest(leftFocus.center, options: nil)
         
@@ -311,18 +350,17 @@ class JFVrPlayerLayerView: UIView {
         let node = result.node
         
         guard node.name != nil else {
-            preHitNode = node
+            previousHitNode = node
             return
         }
         
-        guard preHitNode != node else {
+        guard previousHitNode != node else {
             return
         }
         
-        preHitNode = node
+        previousHitNode = node
         
         // focus on episode
-        // TODO: - change `for` to `Map` -
         if let episodes = episodes {
             for episode in episodes {
                 if episode.title == node.name {
@@ -339,10 +377,10 @@ class JFVrPlayerLayerView: UIView {
         if node.name == "PlayorPauseButton" {
             startFocusLoading (callback: { [unowned self] in
                 if self.isPlaying {
-                    self.controlBar.updateUI(shouldPause: true)
+                    self.controlBar?.updateUI(shouldPause: true)
                     self.pause()
                 } else {
-                    self.controlBar.updateUI(shouldPause: false)
+                    self.controlBar?.updateUI(shouldPause: false)
                     self.play()
                 }
             })
@@ -520,40 +558,6 @@ class JFVrPlayerLayerView: UIView {
         timer?.fireDate = .distantFuture
     }
     
-    func resetPlayer() {
-        
-        pause()
-        
-        playerItem = nil
-        player?.replaceCurrentItem(with: nil)
-        player = nil
-        videoNode?.removeFromParent()
-        playerNode?.removeFromParentNode()
-        playerNode = nil
-        isPlayToEnd = true
-        
-        timer?.invalidate()
-        timer = nil
-        focusDetectionTimer?.invalidate()
-        focusDetectionTimer = nil
-        
-        // remove episodes
-        if let _ = episodes {
-            for item in episodes! {
-                let episodeNode = scene.rootNode.childNode(withName: item.title, recursively: false)
-                episodeNode?.removeFromParentNode()
-            }
-            let replayNode = scene.rootNode.childNode(withName: "Replay", recursively: true)
-            replayNode?.removeFromParentNode()
-        }
-        
-        episodes?.removeAll()
-        episodes = nil
-        
-        // remove notification observer
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
-    }
-    
     func playerTimerAction() {
         guard let playerItem = playerItem else {
             return
@@ -623,6 +627,23 @@ class JFVrPlayerLayerView: UIView {
         default:
             motionEnable = true
         }
+    }
+    
+    func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+        if recognizer.scale < 1 {
+            if cameraFox < 85 {
+                cameraFox += 1.5
+            }
+        } else {
+            if cameraFox > 20 {
+                cameraFox -= 1.5
+            }
+        }
+        
+        leftCameraNode.camera?.xFov = cameraFox
+        leftCameraNode.camera?.yFov = cameraFox
+        rightCameraNode.camera?.xFov = cameraFox
+        rightCameraNode.camera?.yFov = cameraFox
     }
 }
 

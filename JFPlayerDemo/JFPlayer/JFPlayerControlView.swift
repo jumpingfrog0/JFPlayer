@@ -77,7 +77,7 @@ class JFTimeSlider: UISlider {
         topBar.addSubview(titleLabel)
         topBar.addSubview(modeButton)
         
-        backButton.setImage(JFImageResourcePath("BMPlayer_back"), for: .normal)
+        backButton.setImage(JFImageResourcePath("JFPlayer_back"), for: .normal)
         
         titleLabel.text = ""
         titleLabel.textColor = UIColor.white
@@ -96,8 +96,8 @@ class JFTimeSlider: UISlider {
         bottomBar.addSubview(timeSlider)
         bottomBar.addSubview(fullScreenButton)
         
-        playButton.setImage(JFImageResourcePath("BMPlayer_play"), for: .normal)
-        playButton.setImage(JFImageResourcePath("BMPlayer_pause"), for: .selected)
+        playButton.setImage(JFImageResourcePath("JFPlayer_play"), for: .normal)
+        playButton.setImage(JFImageResourcePath("JFPlayer_pause"), for: .selected)
         
         currentTimeLabel.textColor = UIColor.white
         currentTimeLabel.font = UIFont.systemFont(ofSize: 12)
@@ -112,14 +112,14 @@ class JFTimeSlider: UISlider {
         timeSlider.maximumValue = 1.0
         timeSlider.minimumValue = 0.0
         timeSlider.value = 0.0
-        timeSlider.setThumbImage(JFImageResourcePath("BMPlayer_slider_thumb"), for: .normal)
+        timeSlider.setThumbImage(JFImageResourcePath("JFPlayer_slider_thumb"), for: .normal)
         timeSlider.maximumTrackTintColor = UIColor.clear
         timeSlider.minimumTrackTintColor = configuration.tintColor
         
         progressView.tintColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.6)
         progressView.trackTintColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3)
         
-        fullScreenButton.setImage(JFImageResourcePath("BMPlayer_fullscreen"), for: .normal)
+        fullScreenButton.setImage(JFImageResourcePath("JFPlayer_fullscreen"), for: .normal)
         
         // Center
         mainMaskView.addSubview(loadingIndicator)
@@ -128,7 +128,7 @@ class JFTimeSlider: UISlider {
         
         mainMaskView.addSubview(replayButton)
         replayButton.isHidden = true
-        replayButton.setImage(JFImageResourcePath("BMplayer_replay"), for: .normal)
+        replayButton.setImage(JFImageResourcePath("JFplayer_replay"), for: .normal)
         replayButton.addTarget(self, action: #selector(pressedReplayButton(_:)), for: .touchUpInside)
     }
     
@@ -245,9 +245,9 @@ class JFTimeSlider: UISlider {
         isFullScreen = isForFullScreen
         
         if isForFullScreen {
-            fullScreenButton.setImage(JFImageResourcePath("BMPlayer_portialscreen"), for: .normal)
+            fullScreenButton.setImage(JFImageResourcePath("JFPlayer_portialscreen"), for: .normal)
         } else {
-            fullScreenButton.setImage(JFImageResourcePath("BMPlayer_fullscreen"), for: .normal)
+            fullScreenButton.setImage(JFImageResourcePath("JFPlayer_fullscreen"), for: .normal)
         }
     }
     
