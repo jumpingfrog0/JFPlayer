@@ -22,7 +22,12 @@ class JFPlayerLayerView: UIView {
     
     var isPlaying = false
     var isPlayToEnd = false
-    var status: JFPlayerStatus = .unknown
+    
+    var status: JFPlayerStatus = .unknown {
+        didSet {
+            delegate?.playerLayerView(playerLayerView: self, statusDidChange: status)
+        }
+    }
     
     // MARK: - Configure
     
@@ -38,6 +43,10 @@ class JFPlayerLayerView: UIView {
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(playerTimerAction), userInfo: nil, repeats: true)
             
             NotificationCenter.default.addObserver(self, selector: #selector(playerDidPlayToEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: playerItem)
+            playerItem?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+            playerItem?.addObserver(self, forKeyPath: "loadedTimeRanges", options: .new, context: nil)
+            playerItem?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
+            playerItem?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
         }
     }
     
@@ -61,7 +70,7 @@ class JFPlayerLayerView: UIView {
         setNeedsLayout()
     }
 
-    // MARK: - Actions
+    // MARK: - Actions & Events
     func play() {
         if let player = player {
             isPlaying = true
@@ -80,16 +89,21 @@ class JFPlayerLayerView: UIView {
         
         pause()
         
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
+        playerItem?.removeObserver(self, forKeyPath: "status")
+        playerItem?.removeObserver(self, forKeyPath: "loadedTimeRanges")
+        playerItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty")
+        playerItem?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp")
+        
         playerItem = nil
         playerLayer?.removeFromSuperlayer()
+        playerLayer = nil
         player?.replaceCurrentItem(with: nil)
         player = nil
         isPlayToEnd = true
         
         timer?.invalidate()
         timer = nil
-        
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
     func playerTimerAction() {
@@ -135,6 +149,59 @@ class JFPlayerLayerView: UIView {
         isPlaying = false
         status = .playToEnd
         delegate?.playerLayerView(playerLayerView: self, statusDidChange: status)
-        print("xxxxx")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        guard let item = object as? AVPlayerItem, let keyPath = keyPath else {
+            return
+        }
+        
+        guard item == playerItem else {
+            return
+        }
+        
+        switch keyPath {
+            
+        case "status":
+            if player?.status == AVPlayerStatus.readyToPlay {
+                status = .readyToPlay
+            } else if player?.status == AVPlayerStatus.failed {
+                status = .error
+            } else {
+                status = .unknown
+            }
+            
+        case "loadedTimeRanges":
+            let loadedDuration = availableDuration()
+            let totalDuration = CMTimeGetSeconds(item.duration)
+            delegate?.playerLayerView(playerLayerView: self, loadedTimeDidChange: loadedDuration, totalDuration: totalDuration)
+            
+        case "playbackBufferEmpty":
+            print("buffering")
+            if item.isPlaybackBufferEmpty {
+                status = .buffering
+            }
+        
+        case "playbackLikelyToKeepUp":
+            print("playbackLikelyToKeepUp")
+            if item.isPlaybackLikelyToKeepUp {
+                status = .bufferFinished
+            }
+            
+        default: break
+        }
+    }
+    
+    /// Progress buffer
+    fileprivate func availableDuration() -> TimeInterval {
+        guard let loadedTimeRanges = player?.currentItem?.loadedTimeRanges,
+            let first = loadedTimeRanges.first else {
+            return 0
+        }
+        
+        let timeRange = first.timeRangeValue
+        let result = CMTimeGetSeconds(timeRange.start) + CMTimeGetSeconds(timeRange.duration)
+        return result
     }
 }

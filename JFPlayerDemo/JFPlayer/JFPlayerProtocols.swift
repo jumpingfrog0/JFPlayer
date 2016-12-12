@@ -37,7 +37,7 @@ protocol JFPlayerLayerViewDelegate: class {
     /// Call this method to handle something according to current time
     ///
     /// - parameter playerLayerView: the view of player layer
-    /// - parameter currentTime:     the time(seconds) that player have played
+    /// - parameter currentTime:     the time(seconds) has played
     /// - parameter totalTime:       total duration of the player item
     func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval)
     
@@ -46,6 +46,15 @@ protocol JFPlayerLayerViewDelegate: class {
     /// - parameter playerLayerView: the view of player layer
     /// - parameter status:          the status of player item
     func playerLayerView(playerLayerView: JFPlayerLayerView, statusDidChange status: JFPlayerStatus)
+    
+    
+    /// Call this method to handle progress buffering
+    ///
+    /// - Parameters:
+    ///   - playerLayerView: the view of player layer
+    ///   - loadedTime: the time(seconds) has loaded
+    ///   - totalDuration: total duration of the player item
+    func playerLayerView(playerLayerView: JFPlayerLayerView, loadedTimeDidChange loadedTime: TimeInterval, totalDuration: TimeInterval)
 }
 
 // MARK: - JFVrPlayer Protocols

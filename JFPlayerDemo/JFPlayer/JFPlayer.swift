@@ -162,6 +162,7 @@ class JFPlayer: UIView {
         playerLayer.snp.makeConstraints { (make) in
             make.edges.equalTo(self)
         }
+        controlView.showLoader()
     }
     
     
@@ -302,11 +303,27 @@ extension JFPlayer: JFPlayerLayerViewDelegate {
     
     func playerLayerView(playerLayerView: JFPlayerLayerView, statusDidChange status: JFPlayerStatus) {
         switch status {
+            
+        case .readyToPlay:
+            controlView.hideLoader()
+            
+        case .buffering:
+            controlView.showLoader()
+            
+        case .bufferFinished:
+            controlView.hideLoader()
+            
         case .playToEnd:
             controlView.showPlayToEndView()
+            
         default:
             break
         }
+    }
+    
+    func playerLayerView(playerLayerView: JFPlayerLayerView, loadedTimeDidChange loadedDuration: TimeInterval, totalDuration: TimeInterval) {
+        print("loadedTimeDidChange -- \(loadedDuration) -- \(totalDuration)")
+        controlView.progressView.setProgress(Float(loadedDuration / totalDuration), animated: true)
     }
 }
 

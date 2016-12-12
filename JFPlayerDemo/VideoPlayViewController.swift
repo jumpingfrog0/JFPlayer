@@ -61,9 +61,17 @@ class VideoPlayViewController: UIViewController {
     }
     
     func playResource() {
-        let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
+//        let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
 //        let url = URL(string: "http://baobab.wdjcdn.com/14571455324031.mp4")
+        let url = URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")
         player.playWithUrl(url!, title: "至尊宝")
+        
+        
+//         let url = URL(string: "http://player.hunantv.com/mgtv_v5_main/main.swf?js_function_name=vjjFlash&video_id=3734000")
+//        player.playWithUrl(url!, title: "爸爸去哪儿")
+        
+//        let url = URL(string: "https://www.youtube.com/embed/jL0SZ71rhak")
+//        player.playWithUrl(url!, title: "街舞")
     }
     
     override func viewWillAppear(_ animated: Bool) {
