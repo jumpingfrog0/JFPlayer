@@ -61,9 +61,9 @@ class VideoPlayViewController: UIViewController {
     }
     
     func playResource() {
-//        let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
+        let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
 //        let url = URL(string: "http://baobab.wdjcdn.com/14571455324031.mp4")
-        let url = URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")
+//        let url = URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")
         player.playWithUrl(url!, title: "至尊宝")
         
         

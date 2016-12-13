@@ -142,7 +142,7 @@ open class JFTimeSlider: UISlider {
         
         mainMaskView.addSubview(replayButton)
         replayButton.isHidden = true
-        replayButton.setImage(JFImageResourcePath("JFplayer_replay"), for: .normal)
+        replayButton.setImage(JFImageResourcePath("JFPlayer_replay"), for: .normal)
         replayButton.addTarget(self, action: #selector(pressedReplayButton(_:)), for: .touchUpInside)
     }
     
@@ -247,11 +247,14 @@ open class JFTimeSlider: UISlider {
         topBar.alpha = 0.0
         bottomBar.alpha = 0.0
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-        isHidden = true
     }
     
     func showPlayToEndView() {
         replayButton.isHidden = false
+    }
+    
+    func hidePlayToEndView() {
+        replayButton.isHidden = true
     }
     
     func updateUI(isForFullScreen: Bool) {

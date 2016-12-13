@@ -24,11 +24,11 @@ public func JFImageResourcePath(_ filename: String) -> UIImage? {
 
 enum JFPlayerStatus {
     case unknown
+    case failed
     case readyToPlay
     case buffering
     case bufferFinished
     case playToEnd
-    case error
 }
 
 extension JFPlayer {
@@ -113,6 +113,7 @@ class JFPlayer: UIView {
     }
     
     func replay() {
+        playerLayer.isPlayToEnd = false
         playerLayer.seekToTime(0) { [unowned self] in
             self.play()
         }
@@ -221,6 +222,7 @@ class JFPlayer: UIView {
     }
     
     func replayButtonPressed(_ button: UIButton) {
+        controlView.hidePlayToEndView()
         replay()
     }
     
@@ -259,12 +261,18 @@ class JFPlayer: UIView {
             self.controlView.showUIComponents()
             self.updateStatusBarAppearanceHidden(false)
             
+            if self.playerLayer.isPlayToEnd {
+                self.controlView.showPlayToEndView()
+            }
+            
         }, completion: { _ in
             self.isMaskShowing = true
             
             // do not fade out control view if player is paused
             if self.playerLayer.isPlaying {
                 self.autoFadeOutControlView()
+            } else if self.playerLayer.isPlayToEnd {
+                self.cancelAutoFadeOutControlView()
             } else {
                 self.cancelAutoFadeOutControlView()
             }
@@ -308,6 +316,7 @@ extension JFPlayer: JFPlayerLayerViewDelegate {
             controlView.hideLoader()
             
         case .buffering:
+            cancelAutoFadeOutControlView()
             controlView.showLoader()
             
         case .bufferFinished:
@@ -315,14 +324,13 @@ extension JFPlayer: JFPlayerLayerViewDelegate {
             
         case .playToEnd:
             controlView.showPlayToEndView()
-            
+            showControlViewAnimated()
         default:
             break
         }
     }
     
     func playerLayerView(playerLayerView: JFPlayerLayerView, loadedTimeDidChange loadedDuration: TimeInterval, totalDuration: TimeInterval) {
-        print("loadedTimeDidChange -- \(loadedDuration) -- \(totalDuration)")
         controlView.progressView.setProgress(Float(loadedDuration / totalDuration), animated: true)
     }
 }

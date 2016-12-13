@@ -22,6 +22,7 @@ class JFPlayerLayerView: UIView {
     
     var isPlaying = false
     var isPlayToEnd = false
+    var isBuffering = false
     
     var status: JFPlayerStatus = .unknown {
         didSet {
@@ -167,7 +168,7 @@ class JFPlayerLayerView: UIView {
             if player?.status == AVPlayerStatus.readyToPlay {
                 status = .readyToPlay
             } else if player?.status == AVPlayerStatus.failed {
-                status = .error
+                status = .failed
             } else {
                 status = .unknown
             }
@@ -178,15 +179,16 @@ class JFPlayerLayerView: UIView {
             delegate?.playerLayerView(playerLayerView: self, loadedTimeDidChange: loadedDuration, totalDuration: totalDuration)
             
         case "playbackBufferEmpty":
-            print("buffering")
             if item.isPlaybackBufferEmpty {
                 status = .buffering
             }
         
         case "playbackLikelyToKeepUp":
-            print("playbackLikelyToKeepUp")
-            if item.isPlaybackLikelyToKeepUp {
+            if item.isPlaybackLikelyToKeepUp && status == .buffering {
                 status = .bufferFinished
+                player?.play()
+            } else if !item.isPlaybackLikelyToKeepUp {
+                status = .buffering
             }
             
         default: break
@@ -203,5 +205,29 @@ class JFPlayerLayerView: UIView {
         let timeRange = first.timeRangeValue
         let result = CMTimeGetSeconds(timeRange.start) + CMTimeGetSeconds(timeRange.duration)
         return result
+    }
+    
+    fileprivate func bufferingSomeSecond() {
+        if isBuffering {
+            return
+        }
+        
+        isBuffering = true
+        player?.pause()
+        
+        let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * 1.0 )) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: popTime, execute: {
+            
+            self.isBuffering = false
+            
+            if let item = self.playerItem {
+                if item.isPlaybackLikelyToKeepUp {
+                    self.status = .bufferFinished
+                    self.player?.play()
+                } else {
+                    self.bufferingSomeSecond()
+                }
+            }
+        })
     }
 }
