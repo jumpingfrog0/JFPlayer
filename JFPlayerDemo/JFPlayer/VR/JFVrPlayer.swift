@@ -120,9 +120,9 @@ class JFVrPlayer: UIView {
         controlView.fullScreenButton.addTarget(self, action: #selector(fullScreenButtonPressed(_:)), for: .touchUpInside)
         controlView.backButton.addTarget(self, action: #selector(backButtonPressed(_:)), for: .touchUpInside)
         controlView.replayButton.addTarget(self, action: #selector(replayButtonPressed(_:)), for: .touchUpInside)
-        controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
-        controlView.timeSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
-        controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
+        controlView.progressSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
+        controlView.progressSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
+        controlView.progressSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
         controlView.modeButton.addTarget(self, action: #selector(modeButtonPressed(_:)), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
@@ -205,16 +205,16 @@ class JFVrPlayer: UIView {
         replay()
     }
     
-    func progressSliderTouchBegan(_ slider: JFTimeSlider) {
+    func progressSliderTouchBegan(_ slider: JFProgressSlider) {
         playerLayer.onTimeSliderBegan()
     }
     
-    func progressSliderValueChanged(_ slider: JFTimeSlider) {
+    func progressSliderValueChanged(_ slider: JFProgressSlider) {
         let target = totalDuration * TimeInterval(slider.value)
         controlView.currentTimeLabel.text = formatSecondsToString(target)
     }
     
-    func progressSliderTouchEnded(_ slider: JFTimeSlider) {
+    func progressSliderTouchEnded(_ slider: JFProgressSlider) {
         let target = totalDuration * TimeInterval(slider.value)
         playerLayer.onTimeSliderEnd()
         playerLayer.seekToTime(target, completionHandler: nil)
@@ -278,7 +278,7 @@ extension JFVrPlayer: JFVrPlayerLayerViewDelegate {
         totalDuration = totalTime
         controlView.currentTimeLabel.text = formatSecondsToString(currentTime)
         controlView.totalTimeLabel.text = formatSecondsToString(totalTime)
-        controlView.timeSlider.value = Float(currentTime / totalTime)
+        controlView.progressSlider.value = Float(currentTime / totalTime)
     }
     
     func vrPlayerLayerView(vrPlayerLayerView: JFVrPlayerLayerView, statusDidChange status: JFPlayerStatus) {

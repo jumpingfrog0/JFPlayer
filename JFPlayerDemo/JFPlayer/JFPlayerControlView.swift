@@ -9,7 +9,7 @@
 import UIKit
 import NVActivityIndicatorView
 
-open class JFTimeSlider: UISlider {
+open class JFProgressSlider: UISlider {
     open override func trackRect(forBounds bounds: CGRect) -> CGRect {
         let trackHeight = CGFloat(2.0)
         let positon = CGPoint(x: 0, y: 14)
@@ -46,7 +46,7 @@ open class JFTimeSlider: UISlider {
     var currentTimeLabel = UILabel()
     var totalTimeLabel = UILabel()
     
-    var timeSlider = JFTimeSlider()
+    var progressSlider = JFProgressSlider()
     var progressView = UIProgressView()
     
     var playButton = UIButton(type: UIButtonType.custom)
@@ -114,7 +114,7 @@ open class JFTimeSlider: UISlider {
         bottomBar.addSubview(currentTimeLabel)
         bottomBar.addSubview(totalTimeLabel)
         bottomBar.addSubview(progressView)
-        bottomBar.addSubview(timeSlider)
+        bottomBar.addSubview(progressSlider)
         bottomBar.addSubview(fullScreenButton)
         
         playButton.setImage(JFImageResourcePath("JFPlayer_play"), for: .normal)
@@ -130,12 +130,12 @@ open class JFTimeSlider: UISlider {
         totalTimeLabel.text = "00:00"
         totalTimeLabel.textAlignment = .center
         
-        timeSlider.maximumValue = 1.0
-        timeSlider.minimumValue = 0.0
-        timeSlider.value = 0.0
-        timeSlider.setThumbImage(JFImageResourcePath("JFPlayer_slider_thumb"), for: .normal)
-        timeSlider.maximumTrackTintColor = UIColor.clear
-        timeSlider.minimumTrackTintColor = configuration.tintColor
+        progressSlider.maximumValue = 1.0
+        progressSlider.minimumValue = 0.0
+        progressSlider.value = 0.0
+        progressSlider.setThumbImage(JFImageResourcePath("JFPlayer_slider_thumb"), for: .normal)
+        progressSlider.maximumTrackTintColor = UIColor.clear
+        progressSlider.minimumTrackTintColor = configuration.tintColor
         
         progressView.tintColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.6)
         progressView.trackTintColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3)
@@ -217,20 +217,20 @@ open class JFTimeSlider: UISlider {
             make.width.equalTo(40)
         }
         
-        timeSlider.snp.makeConstraints { (make) in
+        progressSlider.snp.makeConstraints { (make) in
             make.centerY.equalTo(currentTimeLabel)
             make.left.equalTo(currentTimeLabel.snp.right).offset(10).priority(750)
             make.height.equalTo(30)
         }
         
         progressView.snp.makeConstraints { (make) in
-            make.centerY.left.right.equalTo(timeSlider)
+            make.centerY.left.right.equalTo(progressSlider)
             make.height.equalTo(2)
         }
         
         totalTimeLabel.snp.makeConstraints { (make) in
             make.centerY.equalTo(currentTimeLabel)
-            make.left.equalTo(timeSlider.snp.right).offset(5)
+            make.left.equalTo(progressSlider.snp.right).offset(5)
             make.width.equalTo(40)
         }
         
@@ -280,7 +280,7 @@ open class JFTimeSlider: UISlider {
     
     func setupGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        timeSlider.addGestureRecognizer(tapGesture)
+        progressSlider.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Actions
@@ -290,12 +290,12 @@ open class JFTimeSlider: UISlider {
     }
     
     func handleTap(_ recognizer: UITapGestureRecognizer) {
-        let slider = recognizer.view as? JFTimeSlider
+        let slider = recognizer.view as? JFProgressSlider
         let location = recognizer.location(in: slider)
         let length = slider!.bounds.width
         let tapValue = location.x / length
         
-        timeSlider.value = Float(tapValue)
+        progressSlider.value = Float(tapValue)
         delegate?.controlView(self, didTapProgressSliderAt: Float(tapValue))
     }
     
@@ -354,7 +354,7 @@ open class JFTimeSlider: UISlider {
         seekLabel.text = JFPlayer.formatSecondsToString(Int(draggedTime)) + " / " + JFPlayer.formatSecondsToString(Int(totalDuration))
         seekProgressView.setProgress( Float(draggedTime / totalDuration), animated: true)
         
-        timeSlider.value = Float(draggedTime / totalDuration)
+        progressSlider.value = Float(draggedTime / totalDuration)
         currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(draggedTime))
     }
     
