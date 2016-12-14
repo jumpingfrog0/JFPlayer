@@ -128,6 +128,8 @@ class JFPlayerLayerView: UIView {
     func onTimeSliderEnd() {
         if player?.currentItem?.status == AVPlayerItemStatus.readyToPlay {
             timer?.fireDate = Date()
+            
+            // pause for fixing a bug that the playback speed is not consistent
             pause()
         }
     }

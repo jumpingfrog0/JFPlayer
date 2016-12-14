@@ -44,8 +44,11 @@ extension JFPlayer {
 
     }
     
-    class func formatSecondsToString(_ seconds: TimeInterval) -> String {
-        return Int(seconds).timeFormatted()
+    class func formatSecondsToString(_ seconds: Int) -> String {
+        let durMin = seconds / 60
+        let durSec = seconds % 60
+
+        return String(format: "%02zd:%02zd", durMin, durSec)
     }
 }
 
@@ -65,8 +68,11 @@ class JFPlayer: UIView {
     var isMaskShowing = true
     var statusBarIsHidden = false
     var isVolumeAdjusting = false
+    var isSliding = false
     
     var totalDuration: TimeInterval = 0
+    var sumDuration: TimeInterval = 0
+    var sliderLastValue: Float = 0
     
     fileprivate var panDirection = JFPanDirection.horizontal
     
@@ -233,8 +239,14 @@ class JFPlayer: UIView {
             if x > y { // move horizontally
                 
                 panDirection = .horizontal
-//                let currentTime = playerLayer.player?.currentItem
                 
+                if let player = playerLayer.player {
+                    let time = player.currentTime()
+                    sumDuration = TimeInterval(time.value) / TimeInterval(time.timescale)
+                    
+                    playerLayer.onTimeSliderBegan()
+                    controlView.seekViewDraggedBegin()
+                }
                 
             } else { // move vertically
                 
@@ -249,18 +261,42 @@ class JFPlayer: UIView {
         case .changed:
             switch panDirection {
             case .horizontal:
-                horizontalMoved()
+                horizontalMoved(velocity.x)
+                
             case .vertical:
                 verticalMoved(velocity.y)
             }
+            
+        case .ended:
+            sumDuration = 0.0
+            progressSliderTouchEnded(controlView.timeSlider)
             
         default:
             break
         }
     }
         
-    func horizontalMoved() {
+    func horizontalMoved(_ value: CGFloat) {
         
+        guard let playerItem = playerLayer.playerItem else {
+            return
+        }
+        
+        sumDuration += TimeInterval(value / 200)
+        
+        let totalTime = playerItem.duration
+        let totalDuration = TimeInterval(totalTime.value) / TimeInterval(totalTime.timescale)
+        
+        if sumDuration > totalDuration {
+            sumDuration = totalDuration
+        }
+        if sumDuration < 0 {
+            sumDuration = 0
+        }
+        
+        let isForword = value > 0
+        
+        controlView.seek(to: sumDuration, totalDuration: totalDuration, isForword: isForword)
     }
     
     func verticalMoved(_ value: CGFloat) {
@@ -310,19 +346,30 @@ class JFPlayer: UIView {
     }
     
     func progressSliderTouchBegan(_ slider: JFTimeSlider) {
+        isSliding = true
+        cancelAutoFadeOutControlView()
         playerLayer.onTimeSliderBegan()
+        controlView.seekViewDraggedBegin()
     }
     
     func progressSliderValueChanged(_ slider: JFTimeSlider) {
-        let target = totalDuration * TimeInterval(slider.value)
-        controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(target)
+    
+        let isForword = (slider.value - sliderLastValue) > 0
+        
+        controlView.seek(to: TimeInterval(slider.value) * totalDuration, totalDuration: totalDuration, isForword: isForword)
     }
     
     func progressSliderTouchEnded(_ slider: JFTimeSlider) {
         let target = totalDuration * TimeInterval(slider.value)
         playerLayer.onTimeSliderEnd()
-        playerLayer.seekToTime(target, completionHandler: nil)
-        play()
+        playerLayer.seekToTime(target, completionHandler: { [unowned self] in
+            self.play()
+        })
+        controlView.seekViewDraggedEnd()
+        
+        if isSliding {
+            autoFadeOutControlView()
+        }
     }
     
     func deviceOrientationDidChange() {
@@ -382,8 +429,8 @@ class JFPlayer: UIView {
 extension JFPlayer: JFPlayerLayerViewDelegate {
     func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval) {
         totalDuration = totalTime
-        controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(currentTime)
-        controlView.totalTimeLabel.text = JFPlayer.formatSecondsToString(totalTime)
+        controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(currentTime))
+        controlView.totalTimeLabel.text = JFPlayer.formatSecondsToString(Int(totalTime))
         controlView.timeSlider.value = Float(currentTime / totalTime)
     }
     

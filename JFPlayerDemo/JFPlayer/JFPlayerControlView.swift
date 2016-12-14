@@ -59,6 +59,7 @@ open class JFTimeSlider: UISlider {
     var seekView = UIView()
     var seekImageView = UIImageView()
     var seekLabel = UILabel()
+    var seekProgressView = UIProgressView()
     
     var configuration = JFPlayerConfiguration()
     
@@ -152,16 +153,21 @@ open class JFTimeSlider: UISlider {
         mainMaskView.addSubview(seekView)
         seekView.addSubview(seekImageView)
         seekView.addSubview(seekLabel)
+        seekView.addSubview(seekProgressView)
         
         seekLabel.font = UIFont.systemFont(ofSize: 13)
-        seekLabel.textColor = UIColor(red: 0.9098, green: 0.9098, blue: 0.9098, alpha: 1.0)
+        seekLabel.textColor = UIColor.white
+        seekLabel.textAlignment = .center
         
-        seekView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.7)
+        seekProgressView.progressTintColor = UIColor.white
+        seekProgressView.trackTintColor = UIColor.lightGray.withAlphaComponent(0.4)
+        
+        seekView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.8)
         seekView.layer.cornerRadius = 4
         seekView.layer.masksToBounds = true
         seekView.isHidden = true
         
-        seekImageView.image = JFImageResourcePath("JFPlayer_seek_to_image")
+        seekImageView.image = JFImageResourcePath("JFPlayer_fast_forward")
     }
     
     func layout() {
@@ -246,21 +252,27 @@ open class JFTimeSlider: UISlider {
         }
         
         seekView.snp.makeConstraints { (make) in
-            make.center.equalTo(mainMaskView.snp.center)
-            make.width.equalTo(100)
-            make.height.equalTo(40)
+            make.center.equalTo(self)
+            make.width.equalTo(125)
+            make.height.equalTo(80)
         }
         
         seekImageView.snp.makeConstraints { (make) in
-            make.left.equalTo(seekView.snp.left).offset(15)
-            make.centerY.equalTo(seekView.snp.centerY)
-            make.height.equalTo(15)
-            make.width.equalTo(25)
+            make.height.equalTo(32)
+            make.width.equalTo(32)
+            make.top.equalTo(5)
+            make.centerX.equalTo(seekView.snp.centerX)
         }
         
         seekLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(seekImageView.snp.right).offset(10)
-            make.centerY.equalTo(seekView.snp.centerY)
+            make.leading.trailing.equalTo(0)
+            make.top.equalTo(seekImageView.snp.bottom).offset(2)
+        }
+        
+        seekProgressView.snp.makeConstraints { (make) in
+            make.leading.equalTo(12)
+            make.trailing.equalTo(-12)
+            make.top.equalTo(seekLabel.snp.bottom).offset(10)
         }
     }
     
@@ -314,12 +326,31 @@ open class JFTimeSlider: UISlider {
         loadingIndicator.isHidden = true
     }
     
-    func showSeekView(seconds: TimeInterval) {
-        seekView.isHidden = false
-        seekLabel.text = JFPlayer.formatSecondsToString(seconds)
+    func seek(to draggedTime: TimeInterval, totalDuration: TimeInterval, isForword: Bool) {
+        
+        if draggedTime.isNaN || totalDuration.isNaN { // avoid value being NaN 
+            return
+        }
+        
+        let rotate = isForword ? 0 : CGFloat(M_PI)
+        seekImageView.transform = CGAffineTransform(rotationAngle: rotate)
+        seekLabel.text = JFPlayer.formatSecondsToString(Int(draggedTime)) + " / " + JFPlayer.formatSecondsToString(Int(totalDuration))
+        seekProgressView.setProgress( Float(draggedTime / totalDuration), animated: true)
+        
+        timeSlider.value = Float(draggedTime / totalDuration)
+        currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(draggedTime))
     }
     
-    func hideSeekView() {
+    func seekViewDraggedBegin() {
+        seekView.isHidden = false
+    }
+    
+//    func seekViewDraggedChanged(_ value: Float, totalDuration: TimeInterval) {
+//        let target = totalDuration * TimeInterval(value)
+//        currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(target))
+//    }
+    
+    func seekViewDraggedEnd() {
         seekView.isHidden = true
     }
 }
