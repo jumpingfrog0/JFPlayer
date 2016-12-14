@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - JFPlayer Protocols
 
-public protocol JFPlayerControlViewDelegate: class {
+protocol JFPlayerControlViewDelegate: class {
     
     
     /// Call this method when user select to change definition
@@ -21,6 +21,8 @@ public protocol JFPlayerControlViewDelegate: class {
     
     /// Call this method when user press on replay button
     func controlViewDidPressOnReplay()
+    
+    func controlView(_ controlView: JFPlayerControlView, didTapProgressSliderAt value: Float)
 }
 
 protocol JFPlayerDefinitionProtocol {

@@ -314,4 +314,8 @@ extension JFVrPlayer: JFPlayerControlViewDelegate {
     func controlViewDidSelectDefinition(_ index: Int) {
         
     }
+    
+    func controlView(_ controlView: JFPlayerControlView, didTapProgressSliderAt value: Float) {
+        
+    }
 }

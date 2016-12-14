@@ -367,7 +367,11 @@ class JFPlayer: UIView {
         })
         controlView.seekViewDraggedEnd()
         
-        if isSliding {
+        if !playerLayer.isPlayToEnd { // hide replay button if not play to the end
+            controlView.hidePlayToEndView()
+        }
+        
+        if isSliding { // being dragged the progress slider
             autoFadeOutControlView()
         }
     }
@@ -393,7 +397,7 @@ class JFPlayer: UIView {
         }, completion: { _ in
             self.isMaskShowing = true
             
-            // do not fade out control view if player is paused
+            // do not fade out control view if being paused or playing to the end
             if self.playerLayer.isPlaying {
                 self.autoFadeOutControlView()
             } else if self.playerLayer.isPlayToEnd {
@@ -469,5 +473,10 @@ extension JFPlayer: JFPlayerControlViewDelegate {
     
     func controlViewDidSelectDefinition(_ index: Int) {
         
+    }
+    
+    func controlView(_ controlView: JFPlayerControlView, didTapProgressSliderAt value: Float) {
+        
+        progressSliderTouchEnded(controlView.timeSlider)
     }
 }

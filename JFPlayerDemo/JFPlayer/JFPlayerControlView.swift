@@ -76,12 +76,14 @@ open class JFTimeSlider: UISlider {
         
         initUI()
         layout()
+        setupGestures()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initUI()
         layout()
+        setupGestures()
     }
     
     func initUI() {
@@ -276,10 +278,25 @@ open class JFTimeSlider: UISlider {
         }
     }
     
+    func setupGestures() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        timeSlider.addGestureRecognizer(tapGesture)
+    }
+    
     // MARK: - Actions
     
     func pressedReplayButton(_ button: UIButton) {
         button.isHidden = true
+    }
+    
+    func handleTap(_ recognizer: UITapGestureRecognizer) {
+        let slider = recognizer.view as? JFTimeSlider
+        let location = recognizer.location(in: slider)
+        let length = slider!.bounds.width
+        let tapValue = location.x / length
+        
+        timeSlider.value = Float(tapValue)
+        delegate?.controlView(self, didTapProgressSliderAt: Float(tapValue))
     }
     
     // MARK: - Public Methods
@@ -344,11 +361,6 @@ open class JFTimeSlider: UISlider {
     func seekViewDraggedBegin() {
         seekView.isHidden = false
     }
-    
-//    func seekViewDraggedChanged(_ value: Float, totalDuration: TimeInterval) {
-//        let target = totalDuration * TimeInterval(value)
-//        currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(target))
-//    }
     
     func seekViewDraggedEnd() {
         seekView.isHidden = true

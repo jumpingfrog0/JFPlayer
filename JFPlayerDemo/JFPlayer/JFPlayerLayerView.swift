@@ -75,6 +75,7 @@ class JFPlayerLayerView: UIView {
     func play() {
         if let player = player {
             isPlaying = true
+            isPlayToEnd = false
             player.play()
             timer?.fireDate = Date()
         }
@@ -101,7 +102,7 @@ class JFPlayerLayerView: UIView {
         playerLayer = nil
         player?.replaceCurrentItem(with: nil)
         player = nil
-        isPlayToEnd = true
+        isPlayToEnd = false
         
         timer?.invalidate()
         timer = nil
