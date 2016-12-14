@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import MediaPlayer
 
 public func JFImageResourcePath(_ filename: String) -> UIImage? {
     if let bunbleUrl = Bundle.main.url(forResource: "JFPlayer", withExtension: "bundle") {
@@ -31,11 +32,20 @@ enum JFPlayerStatus {
     case playToEnd
 }
 
+enum JFPanDirection: Int {
+    case horizontal = 0
+    case vertical = 1
+}
+
 extension JFPlayer {
     struct AnimationTimeInterval {
         static let fadeOut = 0.5
         static let delay = 4.0
 
+    }
+    
+    class func formatSecondsToString(_ seconds: TimeInterval) -> String {
+        return Int(seconds).timeFormatted()
     }
 }
 
@@ -46,6 +56,7 @@ class JFPlayer: UIView {
     var videoItem: JFPlayerItem!
     var playerLayer: JFPlayerLayerView!
     var controlView: JFPlayerControlView!
+    var volumeSlider: UISlider!
     
     var isFullScreen: Bool {
         return UIApplication.shared.statusBarOrientation.isLandscape
@@ -53,7 +64,11 @@ class JFPlayer: UIView {
     
     var isMaskShowing = true
     var statusBarIsHidden = false
+    var isVolumeAdjusting = false
+    
     var totalDuration: TimeInterval = 0
+    
+    fileprivate var panDirection = JFPanDirection.horizontal
     
     /// using for avoiding bugs in full screen mode
     fileprivate var sizeRatioDetected = false
@@ -63,6 +78,7 @@ class JFPlayer: UIView {
         super.init(frame: frame)
         initUI()
         addActionListener()
+        configureVolume()
         preparePlayer()
     }
     
@@ -70,6 +86,7 @@ class JFPlayer: UIView {
         super.init(coder: aDecoder)
         initUI()
         addActionListener()
+        configureVolume()
         preparePlayer()
     }
     
@@ -141,6 +158,9 @@ class JFPlayer: UIView {
             make.edges.equalTo(self)
         }
         controlView.updateUI(isForFullScreen: false)
+        
+        let brightnessView = JFBrightnessView.shared
+        UIApplication.shared.keyWindow?.addSubview(brightnessView)
     }
     
     func addActionListener() {
@@ -153,7 +173,10 @@ class JFPlayer: UIView {
         controlView.timeSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureTapped(_:))))
+        
+        // add gestures
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(_:))))
+        addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:))))
     }
     
     func preparePlayer() {
@@ -166,6 +189,14 @@ class JFPlayer: UIView {
         controlView.showLoader()
     }
     
+    func configureVolume() {
+        let volumeView = MPVolumeView()
+        for view in volumeView.subviews {
+            if let slider = view as? UISlider {
+                volumeSlider = slider
+            }
+        }
+    }
     
     /// Using for avoiding bugs in full screen mode
     fileprivate func detectSizeRatio() {
@@ -180,11 +211,63 @@ class JFPlayer: UIView {
     
     // MARK: - Actions
     
-    func tapGestureTapped(_ recognizer: UITapGestureRecognizer) {
+    func handleTap(_ recognizer: UITapGestureRecognizer) {
         if isMaskShowing {
             hideControlViewAnimated()
         } else {
             showControlViewAnimated()
+        }
+    }
+    
+    func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        
+        let location = recognizer.location(in: self)
+        let velocity = recognizer.velocity(in: self)
+        
+        switch recognizer.state {
+        case .began:
+            
+            let x = fabs(velocity.x)
+            let y = fabs(velocity.y)
+            
+            if x > y { // move horizontally
+                
+                panDirection = .horizontal
+//                let currentTime = playerLayer.player?.currentItem
+                
+                
+            } else { // move vertically
+                
+                panDirection = .vertical
+                if location.x > bounds.width / 2.0 { // adjust volume
+                    isVolumeAdjusting = true
+                } else {
+                    isVolumeAdjusting = false
+                }
+            }
+            
+        case .changed:
+            switch panDirection {
+            case .horizontal:
+                horizontalMoved()
+            case .vertical:
+                verticalMoved(velocity.y)
+            }
+            
+        default:
+            break
+        }
+    }
+        
+    func horizontalMoved() {
+        
+    }
+    
+    func verticalMoved(_ value: CGFloat) {
+        if isVolumeAdjusting {
+            volumeSlider.value -= Float(value / 10000)
+        } else {
+            UIScreen.main.brightness -= value / 10000
         }
     }
     
@@ -232,7 +315,7 @@ class JFPlayer: UIView {
     
     func progressSliderValueChanged(_ slider: JFTimeSlider) {
         let target = totalDuration * TimeInterval(slider.value)
-        controlView.currentTimeLabel.text = formatSecondsToString(target)
+        controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(target)
     }
     
     func progressSliderTouchEnded(_ slider: JFTimeSlider) {
@@ -249,11 +332,6 @@ class JFPlayer: UIView {
     }
     
     // MARK: - Private Methods
-    fileprivate func formatSecondsToString(_ seconds: TimeInterval) -> String {
-        let min = Int(seconds / 60)
-        let sec = Int(seconds.truncatingRemainder(dividingBy: 60))
-        return String(format: "%02d:%02d", min, sec)
-    }
     
     fileprivate func showControlViewAnimated() {
         UIView.animate(withDuration: JFPlayer.AnimationTimeInterval.fadeOut, animations: {
@@ -304,8 +382,8 @@ class JFPlayer: UIView {
 extension JFPlayer: JFPlayerLayerViewDelegate {
     func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval) {
         totalDuration = totalTime
-        controlView.currentTimeLabel.text = formatSecondsToString(currentTime)
-        controlView.totalTimeLabel.text = formatSecondsToString(totalTime)
+        controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(currentTime)
+        controlView.totalTimeLabel.text = JFPlayer.formatSecondsToString(totalTime)
         controlView.timeSlider.value = Float(currentTime / totalTime)
     }
     

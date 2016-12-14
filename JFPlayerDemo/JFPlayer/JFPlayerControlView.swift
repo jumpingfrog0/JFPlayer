@@ -56,6 +56,10 @@ open class JFTimeSlider: UISlider {
     var loadingIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
     var replayButton = UIButton(type: UIButtonType.custom)
     
+    var seekView = UIView()
+    var seekImageView = UIImageView()
+    var seekLabel = UILabel()
+    
     var configuration = JFPlayerConfiguration()
     
     var isFullScreen = false
@@ -144,6 +148,20 @@ open class JFTimeSlider: UISlider {
         replayButton.isHidden = true
         replayButton.setImage(JFImageResourcePath("JFPlayer_replay"), for: .normal)
         replayButton.addTarget(self, action: #selector(pressedReplayButton(_:)), for: .touchUpInside)
+        
+        mainMaskView.addSubview(seekView)
+        seekView.addSubview(seekImageView)
+        seekView.addSubview(seekLabel)
+        
+        seekLabel.font = UIFont.systemFont(ofSize: 13)
+        seekLabel.textColor = UIColor(red: 0.9098, green: 0.9098, blue: 0.9098, alpha: 1.0)
+        
+        seekView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.7)
+        seekView.layer.cornerRadius = 4
+        seekView.layer.masksToBounds = true
+        seekView.isHidden = true
+        
+        seekImageView.image = JFImageResourcePath("JFPlayer_seek_to_image")
     }
     
     func layout() {
@@ -226,6 +244,24 @@ open class JFTimeSlider: UISlider {
             make.centerY.equalTo(mainMaskView.snp.centerY)
             make.width.height.equalTo(50)
         }
+        
+        seekView.snp.makeConstraints { (make) in
+            make.center.equalTo(mainMaskView.snp.center)
+            make.width.equalTo(100)
+            make.height.equalTo(40)
+        }
+        
+        seekImageView.snp.makeConstraints { (make) in
+            make.left.equalTo(seekView.snp.left).offset(15)
+            make.centerY.equalTo(seekView.snp.centerY)
+            make.height.equalTo(15)
+            make.width.equalTo(25)
+        }
+        
+        seekLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(seekImageView.snp.right).offset(10)
+            make.centerY.equalTo(seekView.snp.centerY)
+        }
     }
     
     // MARK: - Actions
@@ -276,5 +312,14 @@ open class JFTimeSlider: UISlider {
     func hideLoader() {
         loadingIndicator.stopAnimating()
         loadingIndicator.isHidden = true
+    }
+    
+    func showSeekView(seconds: TimeInterval) {
+        seekView.isHidden = false
+        seekLabel.text = JFPlayer.formatSecondsToString(seconds)
+    }
+    
+    func hideSeekView() {
+        seekView.isHidden = true
     }
 }

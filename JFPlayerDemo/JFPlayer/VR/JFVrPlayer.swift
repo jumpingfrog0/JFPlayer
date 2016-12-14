@@ -126,7 +126,7 @@ class JFVrPlayer: UIView {
         controlView.modeButton.addTarget(self, action: #selector(modeButtonPressed(_:)), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureTapped(_:))))
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(_:))))
     }
     
     func preparePlayer() {
@@ -159,7 +159,7 @@ class JFVrPlayer: UIView {
         playerLayer.updateUI(isForFullScreen: isFullScreen)
     }
     
-    func tapGestureTapped(_ recognizer: UITapGestureRecognizer) {
+    func handleTap(_ recognizer: UITapGestureRecognizer) {
         if isMaskShowing {
             hideControlViewAnimated()
         } else {

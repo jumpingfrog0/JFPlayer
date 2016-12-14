@@ -15,6 +15,5 @@ class ViewController: BaseViewController {
         
 //        UIApplication.shared.isStatusBarHidden = true
     }
-
 }
 

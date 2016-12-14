@@ -213,6 +213,8 @@ class JFPlayerLayerView: UIView {
         }
         
         isBuffering = true
+        
+        // pause for a while to avoid some unexpected and unpredicable issues.
         player?.pause()
         
         let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * 1.0 )) / Double(NSEC_PER_SEC)

@@ -29,6 +29,7 @@
 		08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */; };
 		08E4522B1DE34FEC005F7CE5 /* demo.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 08E4522A1DE34FEC005F7CE5 /* demo.m4v */; };
 		08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F0B5F21DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift */; };
+		08F3B5E41E012B7B00C16B79 /* JFBrightnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F3B5E31E012B7B00C16B79 /* JFBrightnessView.swift */; };
 		08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */; };
 		08FDB4DB1DDB6E13002DB611 /* JFPlayer.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */; };
 		08FDB4DD1DDB73DC002DB611 /* JFPlayerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */; };
@@ -83,6 +84,7 @@
 		08BDA7701DD9981500E192A8 /* VideoPlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayViewController.swift; sourceTree = "<group>"; };
 		08E4522A1DE34FEC005F7CE5 /* demo.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = demo.m4v; sourceTree = "<group>"; };
 		08F0B5F21DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayerControlBar.swift; sourceTree = "<group>"; };
+		08F3B5E31E012B7B00C16B79 /* JFBrightnessView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFBrightnessView.swift; sourceTree = "<group>"; };
 		08FDB4A31DDB26E6002DB611 /* RootNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootNavigationController.swift; sourceTree = "<group>"; };
 		08FDB4DA1DDB6E13002DB611 /* JFPlayer.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JFPlayer.bundle; sourceTree = "<group>"; };
 		08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerConfiguration.swift; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				080568381DD95800006D6A03 /* JFPlayerControlView.swift */,
 				08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */,
 				0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */,
+				08F3B5E31E012B7B00C16B79 /* JFBrightnessView.swift */,
 			);
 			path = JFPlayer;
 			sourceTree = "<group>";
@@ -453,6 +456,7 @@
 				080568061DD8D72B006D6A03 /* ViewController.swift in Sources */,
 				080568041DD8D72B006D6A03 /* AppDelegate.swift in Sources */,
 				080568351DD957D2006D6A03 /* JFPlayer.swift in Sources */,
+				08F3B5E41E012B7B00C16B79 /* JFBrightnessView.swift in Sources */,
 				08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */,
 				08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */,
 				088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */,
@@ -625,7 +629,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.JFPlayerDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -644,7 +648,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.JFPlayerDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
