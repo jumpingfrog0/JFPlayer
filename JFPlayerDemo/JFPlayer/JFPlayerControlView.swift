@@ -376,7 +376,6 @@ open class JFProgressSlider: UISlider {
         definitionCount = items.count
         definitionSelectionIsShrinking = true
         definitionSelectionView.isHidden = true
-        definetionPreview.isHidden = false
         
         for (idx, item) in items.enumerated() {
             let button = JFPlayerButton()
@@ -405,7 +404,7 @@ open class JFProgressSlider: UISlider {
     func showUIComponents() {
         topBar.alpha = 1.0
         bottomBar.alpha = 1.0
-        definetionPreview.isHidden = false
+        definetionPreview.isHidden = !isFullScreen
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
         isHidden = false
     }
@@ -432,6 +431,7 @@ open class JFProgressSlider: UISlider {
     func updateUI(isForFullScreen: Bool) {
         
         isFullScreen = isForFullScreen
+        definetionPreview.isHidden = !isFullScreen
         
         if isForFullScreen {
             fullScreenButton.setImage(JFImageResourcePath("JFPlayer_portialscreen"), for: .normal)

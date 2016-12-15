@@ -192,6 +192,8 @@ class JFPlayer: UIView {
         controlView.progressSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterForeground), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         
         // add gestures
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(_:))))
@@ -394,6 +396,16 @@ class JFPlayer: UIView {
         
         setNeedsLayout()
         controlView.updateUI(isForFullScreen: isFullScreen)
+    }
+    
+    func appDidEnterBackground() {
+        pause()
+        cancelAutoFadeOutControlView()
+    }
+    
+    func appDidEnterForeground() {
+        play()
+        autoFadeOutControlView()
     }
     
     // MARK: - Private Methods
