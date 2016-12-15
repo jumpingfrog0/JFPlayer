@@ -8,5 +8,6 @@ target 'JFPlayerDemo' do
 
   pod 'NVActivityIndicatorView'
   pod 'SnapKit'
+  pod 'DynamicColor'
 
 end

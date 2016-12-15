@@ -1,15 +1,18 @@
 PODS:
+  - DynamicColor (3.1.0)
   - NVActivityIndicatorView (3.0)
   - SnapKit (3.0.2)
 
 DEPENDENCIES:
+  - DynamicColor
   - NVActivityIndicatorView
   - SnapKit
 
 SPEC CHECKSUMS:
+  DynamicColor: 4dec283a881f7f9d9f3bc88fb5f306724242575f
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   SnapKit: 2e456761aa92d4d4067a7a5594c18769d451a8ad
 
-PODFILE CHECKSUM: 9b3cb731a8416e5ba81b13ae9d42ea50fa8b6ebc
+PODFILE CHECKSUM: aef977fd4e5dc1f20591632f141b7a5b25dcdba5
 
 COCOAPODS: 1.1.1

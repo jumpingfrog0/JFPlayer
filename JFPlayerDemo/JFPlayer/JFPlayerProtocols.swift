@@ -16,7 +16,7 @@ protocol JFPlayerControlViewDelegate: class {
     /// Call this method when user select to change definition
     ///
     /// - parameter index: definition item index
-    func controlViewDidSelectDefinition(_ index: Int)
+    func controlView(_ controlView: JFPlayerControlView, didSelectDefinitionAt index: Int)
     
     
     /// Call this method when user press on replay button

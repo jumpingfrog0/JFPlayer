@@ -10,12 +10,12 @@ import UIKit
 
 class JFPlayerItem {
     var title: String
-    var resource: [JFPlayerDefinitionProtocol]
+    var resources: [JFPlayerDefinitionProtocol]
     var cover: String
     
-    init(title: String, resource: [JFPlayerDefinitionProtocol], cover: String = "") {
+    init(title: String, resources: [JFPlayerDefinitionProtocol], cover: String = "") {
         self.title = title
-        self.resource = resource
+        self.resources = resources
         self.cover = cover
     }
 }

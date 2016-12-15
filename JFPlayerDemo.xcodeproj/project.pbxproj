@@ -22,6 +22,7 @@
 		088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */; };
 		088758B41DDCBCF200C47E78 /* JFVrPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */; };
 		088758B61DDCBD6600C47E78 /* JFVrPlayerLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */; };
+		088D83861E02485C00C50D84 /* JFPlayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088D83851E02485C00C50D84 /* JFPlayerButton.swift */; };
 		08939CE51DD9BE0200B855EF /* UINavigationBar+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */; };
 		08939CE71DDB034B00B855EF /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08939CE61DDB034B00B855EF /* BaseViewController.swift */; };
 		08ACE60B1DF7BC1C00F515D2 /* Number+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */; };
@@ -77,6 +78,7 @@
 		088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRPlayerViewController.swift; sourceTree = "<group>"; };
 		088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayer.swift; sourceTree = "<group>"; };
 		088758B51DDCBD6600C47E78 /* JFVrPlayerLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayerLayerView.swift; sourceTree = "<group>"; };
+		088D83851E02485C00C50D84 /* JFPlayerButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerButton.swift; sourceTree = "<group>"; };
 		08939CE41DD9BE0200B855EF /* UINavigationBar+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Extend.swift"; sourceTree = "<group>"; };
 		08939CE61DDB034B00B855EF /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Number+Extend.swift"; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				08BDA76E1DD9668E00E192A8 /* JFPlayerItem.swift */,
 				080568361DD957F1006D6A03 /* JFPlayerLayerView.swift */,
 				080568381DD95800006D6A03 /* JFPlayerControlView.swift */,
+				088D83851E02485C00C50D84 /* JFPlayerButton.swift */,
 				08FDB4DC1DDB73DC002DB611 /* JFPlayerConfiguration.swift */,
 				0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */,
 				08F3B5E31E012B7B00C16B79 /* JFBrightnessView.swift */,
@@ -460,6 +463,7 @@
 				08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */,
 				08FDB4A41DDB26E7002DB611 /* RootNavigationController.swift in Sources */,
 				088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */,
+				088D83861E02485C00C50D84 /* JFPlayerButton.swift in Sources */,
 				080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */,
 				08BDA7711DD9981500E192A8 /* VideoPlayViewController.swift in Sources */,
 				08FDB4E11DDC34B4002DB611 /* UIApplication+Extend.swift in Sources */,
@@ -624,7 +628,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14C37095A29514F683E49425 /* Pods-JFPlayerDemo.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
@@ -643,7 +647,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4E1AFBB4332A3E74C16692F0 /* Pods-JFPlayerDemo.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;

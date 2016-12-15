@@ -12,12 +12,16 @@ import SnapKit
 class VideoPlayViewController: UIViewController {
     
     var player: JFPlayer!
+    var resourceItem: JFPlayerItem!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         preparePlayer()
-        playResource()
+//        playSingleResource()
+        prepareResourceItem()
+        
+        player.play(withItem: resourceItem)
     }
 
     func preparePlayer() {
@@ -60,18 +64,18 @@ class VideoPlayViewController: UIViewController {
         setNeedsStatusBarAppearanceUpdate()
     }
     
-    func playResource() {
+    func playSingleResource() {
         let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
 //        let url = URL(string: "http://baobab.wdjcdn.com/14571455324031.mp4")
 //        let url = URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")
-        player.playWithUrl(url!, title: "至尊宝")
-        
-        
-//         let url = URL(string: "http://player.hunantv.com/mgtv_v5_main/main.swf?js_function_name=vjjFlash&video_id=3734000")
-//        player.playWithUrl(url!, title: "爸爸去哪儿")
-        
-//        let url = URL(string: "https://www.youtube.com/embed/jL0SZ71rhak")
-//        player.playWithUrl(url!, title: "街舞")
+        player.play(withUrl: url!, title: "至尊宝")
+    }
+    
+    func prepareResourceItem() {
+        let resource0 = JFPlayerDefinitionItem(url: URL(string: "http://baobab.wdjcdn.com/1457162012752491010143.mp4")!, definitionName: "高清")
+        let resource1 = JFPlayerDefinitionItem(url: URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")!, definitionName: "标清")
+//        let resource1 = JFPlayerDefinitionItem(url: URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")!, definitionName: "标清")
+        resourceItem = JFPlayerItem(title: "中国第一高楼", resources: [resource0, resource1], cover: "http://img.wdjimg.com/image/video/447f973848167ee5e44b67c8d4df9839_0_0.jpeg")
     }
     
     override func viewWillAppear(_ animated: Bool) {

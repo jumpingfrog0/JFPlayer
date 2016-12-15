@@ -14,5 +14,5 @@ class JFPlayerConfiguration {
     var tintColor = UIColor.white
     var shouldAutoPlay = true
     var loaderType = NVActivityIndicatorType.ballRotateChase
-    
 }
+

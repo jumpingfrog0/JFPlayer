@@ -68,10 +68,10 @@ class VRPlayerViewController: UIViewController {
         let resource2 = JFPlayerDefinitionItem(url: URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography", ofType: "mp4")!), definitionName: "高清")
         let resource3 = JFPlayerDefinitionItem(url: URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography", ofType: "mp4")!), definitionName: "高清")
         var episodes = [JFPlayerItem]()
-        episodes.append(JFPlayerItem(title: "manhuangji", resource: [resource0], cover: "manhuangji"))
-        episodes.append(JFPlayerItem(title: "One Piece", resource: [resource1], cover: "onepiece"))
-        episodes.append(JFPlayerItem(title: "ciyuan", resource: [resource2], cover: "ciyuan"))
-        episodes.append(JFPlayerItem(title: "zhenhunjie", resource: [resource3], cover: "zhenhunjie"))
+        episodes.append(JFPlayerItem(title: "manhuangji", resources: [resource0], cover: "manhuangji"))
+        episodes.append(JFPlayerItem(title: "One Piece", resources: [resource1], cover: "onepiece"))
+        episodes.append(JFPlayerItem(title: "ciyuan", resources: [resource2], cover: "ciyuan"))
+        episodes.append(JFPlayerItem(title: "zhenhunjie", resources: [resource3], cover: "zhenhunjie"))
         
         let url = URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography", ofType: "mp4")!)
         player.episodes = episodes

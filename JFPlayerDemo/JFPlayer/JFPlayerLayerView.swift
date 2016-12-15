@@ -14,6 +14,7 @@ class JFPlayerLayerView: UIView {
     weak var delegate: JFPlayerLayerViewDelegate?
     
     var videoUrl: URL?
+    var videoItem: JFPlayerItem?
     var playerItem: AVPlayerItem?
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?

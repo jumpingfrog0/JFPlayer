@@ -56,7 +56,6 @@ class JFPlayer: UIView {
 
     var backClosure: (() -> Void)?
     
-    var videoItem: JFPlayerItem!
     var playerLayer: JFPlayerLayerView!
     var controlView: JFPlayerControlView!
     var volumeSlider: UISlider!
@@ -70,9 +69,13 @@ class JFPlayer: UIView {
     var isVolumeAdjusting = false
     var isSliding = false
     
+    var currentTime: TimeInterval = 0
     var totalDuration: TimeInterval = 0
     var sumDuration: TimeInterval = 0
     var sliderLastValue: Float = 0
+    var shouldSeekTo: TimeInterval = 0
+    
+    fileprivate var videoItem: JFPlayerItem?
     
     fileprivate var panDirection = JFPanDirection.horizontal
     
@@ -116,10 +119,20 @@ class JFPlayer: UIView {
     
     // MARK: - Public Methods
     
-    func playWithUrl(_ url: URL, title: String = "") {
+    func play(withUrl url: URL, title: String = "") {
         playerLayer.videoUrl = url
         controlView.titleLabel.text = title
         playerLayer.configurePlayer()
+        play()
+    }
+    
+    func play(withItem item: JFPlayerItem, title: String = "") {
+        videoItem = item
+        playerLayer.videoItem = item
+        playerLayer.videoUrl = item.resources.first?.videoUrl
+        playerLayer.configurePlayer()
+        controlView.titleLabel.text = title
+        controlView.prepareDefinitionView(withItems: item.resources)
         play()
     }
     
@@ -360,6 +373,7 @@ class JFPlayer: UIView {
     }
     
     func progressSliderTouchEnded(_ slider: JFProgressSlider) {
+        sliderLastValue = slider.value
         let target = totalDuration * TimeInterval(slider.value)
         playerLayer.onTimeSliderEnd()
         playerLayer.seekToTime(target, completionHandler: { [unowned self] in
@@ -432,6 +446,7 @@ class JFPlayer: UIView {
 
 extension JFPlayer: JFPlayerLayerViewDelegate {
     func playerLayerView(playerLayerView: JFPlayerLayerView, trackTimeDidChange currentTime: TimeInterval, totalTime: TimeInterval) {
+        self.currentTime = currentTime
         totalDuration = totalTime
         controlView.currentTimeLabel.text = JFPlayer.formatSecondsToString(Int(currentTime))
         controlView.totalTimeLabel.text = JFPlayer.formatSecondsToString(Int(totalTime))
@@ -443,6 +458,12 @@ extension JFPlayer: JFPlayerLayerViewDelegate {
             
         case .readyToPlay:
             controlView.hideLoader()
+            if shouldSeekTo != 0 {
+                playerLayer.seekToTime(shouldSeekTo, completionHandler: { [unowned self] in
+                    self.play()
+                    self.shouldSeekTo = 0
+                })
+            }
             
         case .buffering:
             cancelAutoFadeOutControlView()
@@ -471,8 +492,13 @@ extension JFPlayer: JFPlayerControlViewDelegate {
         
     }
     
-    func controlViewDidSelectDefinition(_ index: Int) {
+    func controlView(_ controlView: JFPlayerControlView, didSelectDefinitionAt index: Int) {
+        playerLayer.resetPlayer()
         
+        if let item = videoItem {
+            play(withUrl: item.resources[index].videoUrl)
+        }
+        shouldSeekTo = currentTime
     }
     
     func controlView(_ controlView: JFPlayerControlView, didTapProgressSliderAt value: Float) {

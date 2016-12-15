@@ -39,8 +39,9 @@ open class JFProgressSlider: UISlider {
     /// Top
     var backButton = UIButton(type: UIButtonType.custom)
     var titleLabel = UILabel()
-    var definitionView = UIView()
-    var modeButton = UIButton(type: UIButtonType.custom) // only display in VR player
+    var definitionSelectionView = UIView()
+    var definetionPreview = JFPlayerButton()
+    var modeButton = JFPlayerButton() // only display in VR player
     
     /// Bottom
     var currentTimeLabel = UILabel()
@@ -64,11 +65,17 @@ open class JFProgressSlider: UISlider {
     var configuration = JFPlayerConfiguration()
     
     var isFullScreen = false
+    var definitionSelectionIsShrinking = true
     var isVrPlayer = false {
         didSet {
             modeButton.isHidden = !isVrPlayer
+            definetionPreview.isHidden = isVrPlayer
+            definitionSelectionView.isHidden = isVrPlayer
         }
     }
+    
+    var definitionCount = 0
+    var currentDefinitionIndex = 0
     
     // MARK: - Initialize
     override init(frame: CGRect) {
@@ -97,15 +104,19 @@ open class JFProgressSlider: UISlider {
         topBar.addSubview(backButton)
         topBar.addSubview(titleLabel)
         topBar.addSubview(modeButton)
+        topBar.addSubview(definetionPreview)
+        
+        mainMaskView.addSubview(definitionSelectionView)
         
         backButton.setImage(JFImageResourcePath("JFPlayer_back"), for: .normal)
         
         titleLabel.text = ""
         titleLabel.textColor = UIColor.white
         titleLabel.font = UIFont.systemFont(ofSize: 16)
+
+        definitionSelectionView.clipsToBounds = true
         
         modeButton.isHidden = true
-        modeButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         modeButton.setTitle("VR", for: .normal)
         modeButton.setTitle("普通", for: .selected)
         
@@ -199,10 +210,25 @@ open class JFProgressSlider: UISlider {
             make.centerY.equalTo(backButton)
         }
         
+        definetionPreview.snp.makeConstraints { (make) in
+            make.right.equalTo(topBar.snp.right).offset(-25)
+            make.top.equalTo(titleLabel.snp.top).offset(-4)
+            make.width.equalTo(50)
+            make.height.equalTo(25)
+        }
+        
+        definitionSelectionView.snp.makeConstraints { (make) in
+            make.right.equalTo(topBar.snp.right).offset(-20)
+            make.top.equalTo(titleLabel.snp.top).offset(-4)
+            make.width.equalTo(60)
+            make.height.equalTo(30)
+        }
+        
         modeButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(backButton)
-            make.right.equalTo(topBar.snp.right).offset(-10)
-            make.width.height.equalTo(50)
+            make.right.equalTo(topBar.snp.right).offset(-25)
+            make.top.equalTo(titleLabel.snp.top).offset(-4)
+            make.width.equalTo(50)
+            make.height.equalTo(25)
         }
         
         // Bottom
@@ -279,7 +305,7 @@ open class JFProgressSlider: UISlider {
     }
     
     func setupGestures() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapAtSlider(_:)))
         progressSlider.addGestureRecognizer(tapGesture)
     }
     
@@ -289,7 +315,7 @@ open class JFProgressSlider: UISlider {
         button.isHidden = true
     }
     
-    func handleTap(_ recognizer: UITapGestureRecognizer) {
+    func handleTapAtSlider(_ recognizer: UITapGestureRecognizer) {
         let slider = recognizer.view as? JFProgressSlider
         let location = recognizer.location(in: slider)
         let length = slider!.bounds.width
@@ -299,18 +325,99 @@ open class JFProgressSlider: UISlider {
         delegate?.controlView(self, didTapProgressSliderAt: Float(tapValue))
     }
     
+    func definitionButtonDidSelect(_ button: UIButton) {
+        
+        let height = definitionSelectionIsShrinking ? definitionCount * 40 : 35
+        definitionSelectionView.snp.updateConstraints { (make) in
+            make.height.equalTo(height)
+        }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.layoutIfNeeded()
+        })
+        
+        definitionSelectionIsShrinking = !definitionSelectionIsShrinking
+        definetionPreview.isHidden = !definitionSelectionIsShrinking
+        definitionSelectionView.isHidden = definitionSelectionIsShrinking
+        
+        // if selection view is expanding, set the current definition button being selected
+        if !definitionSelectionIsShrinking {
+            
+            for button in definitionSelectionView.subviews as! [JFPlayerButton] {
+                if button.tag == currentDefinitionIndex {
+                    button.isSelected = true
+                } else {
+                    button.isSelected = false
+                }
+            }
+            
+        } else { // will shrink selection view and change definetion
+            let curIndex = button.tag
+            
+            if currentDefinitionIndex != curIndex {
+                
+                let preIndex = currentDefinitionIndex
+                currentDefinitionIndex = curIndex
+                
+                let preButton = definitionSelectionView.subviews[preIndex] as? JFPlayerButton
+                let curButton = definitionSelectionView.subviews[curIndex] as? JFPlayerButton
+                preButton?.isSelected = false
+                curButton?.isSelected = true
+                
+                delegate?.controlView(self, didSelectDefinitionAt: button.tag)
+                definetionPreview.setTitle(curButton?.titleLabel?.text, for: .normal)
+            }
+        }
+    }
+    
     // MARK: - Public Methods
+    func prepareDefinitionView(withItems items: [JFPlayerDefinitionProtocol]) {
+        
+        definitionCount = items.count
+        definitionSelectionIsShrinking = true
+        definitionSelectionView.isHidden = true
+        definetionPreview.isHidden = false
+        
+        for (idx, item) in items.enumerated() {
+            let button = JFPlayerButton()
+            button.tag = idx
+            button.setTitle(item.definitionName, for: .normal)
+            button.addTarget(self, action: #selector(definitionButtonDidSelect(_:)), for: .touchUpInside)
+            definitionSelectionView.addSubview(button)
+            button.snp.makeConstraints({ (make) in
+                make.top.equalTo(definitionSelectionView.snp.top).offset(35 * idx)
+                make.width.equalTo(50)
+                make.height.equalTo(25)
+                make.centerX.equalTo(definitionSelectionView)
+            })
+            
+            if idx == 0 {
+                definetionPreview.setTitle(item.definitionName, for: .normal)
+                definetionPreview.addTarget(self, action: #selector(definitionButtonDidSelect(_:)), for: .touchUpInside)
+                
+                if items.count == 1 {
+                    definetionPreview.isEnabled = false
+                }
+            }
+        }
+    }
+    
     func showUIComponents() {
         topBar.alpha = 1.0
         bottomBar.alpha = 1.0
+        definetionPreview.isHidden = false
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
         isHidden = false
     }
     
     func hideUIComponents() {
         replayButton.isHidden = true
+        definitionSelectionView.isHidden = true
+        definetionPreview.isHidden = true
+        definitionSelectionIsShrinking = true
         topBar.alpha = 0.0
         bottomBar.alpha = 0.0
+        
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
     }
     

@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DynamicColor.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>NVActivityIndicatorView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,12 +32,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1622413BC45DC0740551EB4AE2B34837</key>
+		<key>668D2FC84F2A8935C38919C8D2E4E0C8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>733206CB991C198259075F20774912DB</key>
+		<key>827E0848C102D7BDBE801C72CBBA6212</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9C97BBB7AD3136FB5B457127CEF75189</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -298,7 +298,7 @@ extension JFVrPlayer: JFVrPlayerLayerViewDelegate {
         controlView.showLoader()
         DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
             self.controlView.hideLoader()
-            self.playWithUrl(item.resource[0].videoUrl, title: item.title)
+            self.playWithUrl(item.resources[0].videoUrl, title: item.title)
         })
         
     }
@@ -311,7 +311,7 @@ extension JFVrPlayer: JFPlayerControlViewDelegate {
         
     }
     
-    func controlViewDidSelectDefinition(_ index: Int) {
+    func controlView(_ controlView: JFPlayerControlView, didSelectDefinitionAt index: Int) {
         
     }
     
