@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="az0-Q8-xsC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="az0-Q8-xsC">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -33,26 +37,44 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qN9-4H-HvO">
-                                <frame key="frameInset" minX="128" minY="103" width="77" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="普通播放器"/>
-                                <connections>
-                                    <segue destination="CvN-Zx-JMP" kind="show" id="8gQ-Hx-rtC"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7EY-G9-DqR">
-                                <frame key="frameInset" minX="134" minY="141" width="66" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="VR播放器"/>
-                                <connections>
-                                    <segue destination="4G1-eg-CZ6" kind="show" id="tmq-LP-hdr"/>
-                                </connections>
-                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="lA3-hG-mMh">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="JFPlayerCell" textLabel="96D-Ff-hxz" style="IBUITableViewCellStyleDefault" id="e7N-u1-Bol">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="e7N-u1-Bol" id="JE0-IP-MND">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96D-Ff-hxz">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="lA3-hG-mMh" secondAttribute="trailing" id="4pF-u7-JSW"/>
+                            <constraint firstItem="lA3-hG-mMh" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="J23-ff-wky"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="lA3-hG-mMh" secondAttribute="bottom" id="aSo-S8-XEP"/>
+                            <constraint firstItem="lA3-hG-mMh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="t9D-WJ-8N2"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="bkh-XM-fof"/>
+                    <connections>
+                        <outlet property="tableView" destination="lA3-hG-mMh" id="ggs-Zy-qXr"/>
+                        <segue destination="CvN-Zx-JMP" kind="show" id="k51-ct-auO"/>
+                        <segue destination="4G1-eg-CZ6" kind="show" id="zX7-sf-Waw"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -61,7 +83,7 @@
         <!--Video Play View Controller-->
         <scene sceneID="UrB-jT-Hq8">
             <objects>
-                <viewController id="CvN-Zx-JMP" customClass="VideoPlayViewController" customModule="JFPlayerDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VideoPlayViewController" id="CvN-Zx-JMP" customClass="VideoPlayViewController" customModule="JFPlayerDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="SQ5-wb-Q5G"/>
                         <viewControllerLayoutGuide type="bottom" id="L63-Tz-FoM"/>
@@ -81,7 +103,7 @@
         <!--Player View Controller-->
         <scene sceneID="Dwq-NU-uVr">
             <objects>
-                <viewController id="4G1-eg-CZ6" customClass="VRPlayerViewController" customModule="JFPlayerDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VRPlayerViewController" id="4G1-eg-CZ6" customClass="VRPlayerViewController" customModule="JFPlayerDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4Yj-Gk-k8B"/>
                         <viewControllerLayoutGuide type="bottom" id="CBT-KY-TYC"/>

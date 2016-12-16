@@ -18,6 +18,7 @@
 		080568371DD957F1006D6A03 /* JFPlayerLayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080568361DD957F1006D6A03 /* JFPlayerLayerView.swift */; };
 		080568391DD95800006D6A03 /* JFPlayerControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080568381DD95800006D6A03 /* JFPlayerControlView.swift */; };
 		0805683B1DD95848006D6A03 /* JFPlayerProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */; };
+		082E36641E03B413003F669E /* UIViewController+Extend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082E36631E03B413003F669E /* UIViewController+Extend.swift */; };
 		088758AD1DDCAE4B00C47E78 /* Aerial_photography.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */; };
 		088758AF1DDCB02F00C47E78 /* VRPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */; };
 		088758B41DDCBCF200C47E78 /* JFVrPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */; };
@@ -74,6 +75,7 @@
 		080568361DD957F1006D6A03 /* JFPlayerLayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerLayerView.swift; sourceTree = "<group>"; };
 		080568381DD95800006D6A03 /* JFPlayerControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerControlView.swift; sourceTree = "<group>"; };
 		0805683A1DD95848006D6A03 /* JFPlayerProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFPlayerProtocols.swift; sourceTree = "<group>"; };
+		082E36631E03B413003F669E /* UIViewController+Extend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extend.swift"; sourceTree = "<group>"; };
 		088758AC1DDCAE4B00C47E78 /* Aerial_photography.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Aerial_photography.mp4; sourceTree = "<group>"; };
 		088758AE1DDCB02F00C47E78 /* VRPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VRPlayerViewController.swift; sourceTree = "<group>"; };
 		088758B31DDCBCF200C47E78 /* JFVrPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JFVrPlayer.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				08FDB4DE1DDC25CE002DB611 /* UIView+Extend.swift */,
 				08FDB4E01DDC34B4002DB611 /* UIApplication+Extend.swift */,
 				08ACE60A1DF7BC1C00F515D2 /* Number+Extend.swift */,
+				082E36631E03B413003F669E /* UIViewController+Extend.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 				08ACE60B1DF7BC1C00F515D2 /* Number+Extend.swift in Sources */,
 				080568061DD8D72B006D6A03 /* ViewController.swift in Sources */,
 				080568041DD8D72B006D6A03 /* AppDelegate.swift in Sources */,
+				082E36641E03B413003F669E /* UIViewController+Extend.swift in Sources */,
 				080568351DD957D2006D6A03 /* JFPlayer.swift in Sources */,
 				08F3B5E41E012B7B00C16B79 /* JFBrightnessView.swift in Sources */,
 				08F0B5F31DF57DF6009E9CB3 /* JFVrPlayerControlBar.swift in Sources */,

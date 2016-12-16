@@ -5,7 +5,6 @@ target 'JFPlayerDemo' do
   use_frameworks!
 
   # Pods for JFPlayerDemo
-
   pod 'NVActivityIndicatorView'
   pod 'SnapKit'
   pod 'DynamicColor'
