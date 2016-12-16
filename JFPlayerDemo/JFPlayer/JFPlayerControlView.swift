@@ -62,10 +62,12 @@ open class JFProgressSlider: UISlider {
     var seekLabel = UILabel()
     var seekProgressView = UIProgressView()
     
+    var lockButton = UIButton()
+    
     var configuration = JFPlayerConfiguration()
     
     var isFullScreen = false
-    var definitionSelectionIsShrinking = true
+    var definitionSelectionIsShrinked = true
     var isVrPlayer = false {
         didSet {
             modeButton.isHidden = !isVrPlayer
@@ -181,6 +183,10 @@ open class JFProgressSlider: UISlider {
         seekView.isHidden = true
         
         seekImageView.image = JFImageResourcePath("JFPlayer_fast_forward")
+        
+        mainMaskView.addSubview(lockButton)
+        lockButton.setImage(JFImageResourcePath("JFPlayer_unlock_nor"), for: .normal)
+        lockButton.setImage(JFImageResourcePath("JFPlayer_lock_nor"), for: .selected)
     }
     
     func layout() {
@@ -302,6 +308,12 @@ open class JFProgressSlider: UISlider {
             make.trailing.equalTo(-12)
             make.top.equalTo(seekLabel.snp.bottom).offset(10)
         }
+        
+        lockButton.snp.makeConstraints { (make) in
+            make.left.equalTo(mainMaskView).offset(15)
+            make.centerY.equalTo(mainMaskView.snp.centerY)
+            make.width.height.equalTo(32)
+        }
     }
     
     func setupGestures() {
@@ -327,7 +339,7 @@ open class JFProgressSlider: UISlider {
     
     func definitionButtonDidSelect(_ button: UIButton) {
         
-        let height = definitionSelectionIsShrinking ? definitionCount * 40 : 35
+        let height = definitionSelectionIsShrinked ? definitionCount * 40 : 35
         definitionSelectionView.snp.updateConstraints { (make) in
             make.height.equalTo(height)
         }
@@ -336,12 +348,12 @@ open class JFProgressSlider: UISlider {
             self.layoutIfNeeded()
         })
         
-        definitionSelectionIsShrinking = !definitionSelectionIsShrinking
-        definetionPreview.isHidden = !definitionSelectionIsShrinking
-        definitionSelectionView.isHidden = definitionSelectionIsShrinking
+        definitionSelectionIsShrinked = !definitionSelectionIsShrinked
+        definetionPreview.isHidden = !definitionSelectionIsShrinked
+        definitionSelectionView.isHidden = definitionSelectionIsShrinked
         
         // if selection view is expanding, set the current definition button being selected
-        if !definitionSelectionIsShrinking {
+        if !definitionSelectionIsShrinked {
             
             for button in definitionSelectionView.subviews as! [JFPlayerButton] {
                 if button.tag == currentDefinitionIndex {
@@ -374,7 +386,7 @@ open class JFProgressSlider: UISlider {
     func prepareDefinitionView(withItems items: [JFPlayerDefinitionProtocol]) {
         
         definitionCount = items.count
-        definitionSelectionIsShrinking = true
+        definitionSelectionIsShrinked = true
         definitionSelectionView.isHidden = true
         
         for (idx, item) in items.enumerated() {
@@ -413,7 +425,7 @@ open class JFProgressSlider: UISlider {
         replayButton.isHidden = true
         definitionSelectionView.isHidden = true
         definetionPreview.isHidden = true
-        definitionSelectionIsShrinking = true
+        definitionSelectionIsShrinked = true
         topBar.alpha = 0.0
         bottomBar.alpha = 0.0
         
@@ -432,6 +444,7 @@ open class JFProgressSlider: UISlider {
         
         isFullScreen = isForFullScreen
         definetionPreview.isHidden = !isFullScreen
+        lockButton.isHidden = !isFullScreen
         
         if isForFullScreen {
             fullScreenButton.setImage(JFImageResourcePath("JFPlayer_portialscreen"), for: .normal)

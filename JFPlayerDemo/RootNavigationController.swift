@@ -8,6 +8,8 @@
 
 import UIKit
 
+// http://www.jianshu.com/p/4a51a2edf270
+
 class RootNavigationController: UINavigationController {
 
     override var shouldAutorotate: Bool {

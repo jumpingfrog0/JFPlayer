@@ -20,7 +20,6 @@ class VideoPlayViewController: UIViewController {
         preparePlayer()
 //        playSingleResource()
         prepareResourceItem()
-        
         player.play(withItem: resourceItem)
     }
 
@@ -98,5 +97,17 @@ class VideoPlayViewController: UIViewController {
             return false
         }
         return hidden
+    }
+    
+    override var shouldAutorotate: Bool {
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if player.isLocked {
+            return .landscape
+        } else {
+            return .all
+        }
     }
 }

@@ -68,6 +68,7 @@ class JFPlayer: UIView {
     var statusBarIsHidden = false
     var isVolumeAdjusting = false
     var isSliding = false
+    var isLocked = false
     
     var currentTime: TimeInterval = 0
     var totalDuration: TimeInterval = 0
@@ -104,6 +105,7 @@ class JFPlayer: UIView {
     }
     
     override func layoutSubviews() {
+        
         super.layoutSubviews()
         
         if !sizeRatioDetected {
@@ -190,6 +192,7 @@ class JFPlayer: UIView {
         controlView.progressSlider.addTarget(self, action: #selector(progressSliderTouchBegan(_:)), for: .touchDown)
         controlView.progressSlider.addTarget(self, action: #selector(progressSliderValueChanged(_:)), for: .valueChanged)
         controlView.progressSlider.addTarget(self, action: #selector(progressSliderTouchEnded(_:)), for: [.touchUpInside, .touchCancel, .touchUpOutside])
+        controlView.lockButton.addTarget(self, action: #selector(lockScreenButtonPressed(_:)), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: NSNotification.Name.UIApplicationDidChangeStatusBarOrientation, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
@@ -236,11 +239,17 @@ class JFPlayer: UIView {
         if isMaskShowing {
             hideControlViewAnimated()
         } else {
-            showControlViewAnimated()
+            if !isLocked {
+                showControlViewAnimated()
+            }
         }
     }
     
     func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        
+        if isLocked {
+            return
+        }
         
         let location = recognizer.location(in: self)
         let velocity = recognizer.velocity(in: self)
@@ -343,6 +352,18 @@ class JFPlayer: UIView {
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
             updateStatusBarAppearanceHidden(false)
             UIApplication.shared.statusBarOrientation = .landscapeRight
+        }
+    }
+    
+    func lockScreenButtonPressed(_ button: UIButton) {
+        button.isSelected = !button.isSelected
+        isLocked = button.isSelected
+        
+        if isLocked {
+            cancelAutoFadeOutControlView()
+            hideControlViewAnimated()
+        } else {
+            showControlViewAnimated()
         }
     }
     
