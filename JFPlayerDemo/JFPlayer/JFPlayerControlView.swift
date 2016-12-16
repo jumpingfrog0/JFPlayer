@@ -40,7 +40,7 @@ open class JFProgressSlider: UISlider {
     var backButton = UIButton(type: UIButtonType.custom)
     var titleLabel = UILabel()
     var definitionSelectionView = UIView()
-    var definetionPreview = JFPlayerButton()
+    var definitionPreview = JFPlayerButton()
     var modeButton = JFPlayerButton() // only display in VR player
     
     /// Bottom
@@ -71,7 +71,7 @@ open class JFProgressSlider: UISlider {
     var isVrPlayer = false {
         didSet {
             modeButton.isHidden = !isVrPlayer
-            definetionPreview.isHidden = isVrPlayer
+            definitionPreview.isHidden = isVrPlayer
             definitionSelectionView.isHidden = isVrPlayer
         }
     }
@@ -106,7 +106,7 @@ open class JFProgressSlider: UISlider {
         topBar.addSubview(backButton)
         topBar.addSubview(titleLabel)
         topBar.addSubview(modeButton)
-        topBar.addSubview(definetionPreview)
+        topBar.addSubview(definitionPreview)
         
         mainMaskView.addSubview(definitionSelectionView)
         
@@ -216,7 +216,7 @@ open class JFProgressSlider: UISlider {
             make.centerY.equalTo(backButton)
         }
         
-        definetionPreview.snp.makeConstraints { (make) in
+        definitionPreview.snp.makeConstraints { (make) in
             make.right.equalTo(topBar.snp.right).offset(-25)
             make.top.equalTo(titleLabel.snp.top).offset(-4)
             make.width.equalTo(50)
@@ -349,7 +349,7 @@ open class JFProgressSlider: UISlider {
         })
         
         definitionSelectionIsShrinked = !definitionSelectionIsShrinked
-        definetionPreview.isHidden = !definitionSelectionIsShrinked
+        definitionPreview.isHidden = !definitionSelectionIsShrinked
         definitionSelectionView.isHidden = definitionSelectionIsShrinked
         
         // if selection view is expanding, set the current definition button being selected
@@ -377,7 +377,7 @@ open class JFProgressSlider: UISlider {
                 curButton?.isSelected = true
                 
                 delegate?.controlView(self, didSelectDefinitionAt: button.tag)
-                definetionPreview.setTitle(curButton?.titleLabel?.text, for: .normal)
+                definitionPreview.setTitle(curButton?.titleLabel?.text, for: .normal)
             }
         }
     }
@@ -403,11 +403,11 @@ open class JFProgressSlider: UISlider {
             })
             
             if idx == 0 {
-                definetionPreview.setTitle(item.definitionName, for: .normal)
-                definetionPreview.addTarget(self, action: #selector(definitionButtonDidSelect(_:)), for: .touchUpInside)
+                definitionPreview.setTitle(item.definitionName, for: .normal)
+                definitionPreview.addTarget(self, action: #selector(definitionButtonDidSelect(_:)), for: .touchUpInside)
                 
                 if items.count == 1 {
-                    definetionPreview.isEnabled = false
+                    definitionPreview.isEnabled = false
                 }
             }
         }
@@ -416,15 +416,20 @@ open class JFProgressSlider: UISlider {
     func showUIComponents() {
         topBar.alpha = 1.0
         bottomBar.alpha = 1.0
-        definetionPreview.isHidden = !isFullScreen
         mainMaskView.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4)
         isHidden = false
+        
+        if definitionCount == 0 {
+            definitionPreview.isHidden = true
+        } else {
+            definitionPreview.isHidden = !isFullScreen
+        }
     }
     
     func hideUIComponents() {
         replayButton.isHidden = true
         definitionSelectionView.isHidden = true
-        definetionPreview.isHidden = true
+        definitionPreview.isHidden = true
         definitionSelectionIsShrinked = true
         topBar.alpha = 0.0
         bottomBar.alpha = 0.0
@@ -443,8 +448,13 @@ open class JFProgressSlider: UISlider {
     func updateUI(isForFullScreen: Bool) {
         
         isFullScreen = isForFullScreen
-        definetionPreview.isHidden = !isFullScreen
         lockButton.isHidden = !isFullScreen
+        
+        if definitionCount == 0 {
+            definitionPreview.isHidden = true
+        } else {
+            definitionPreview.isHidden = !isFullScreen
+        }
         
         if isForFullScreen {
             fullScreenButton.setImage(JFImageResourcePath("JFPlayer_portialscreen"), for: .normal)

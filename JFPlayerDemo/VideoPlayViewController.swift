@@ -18,9 +18,9 @@ class VideoPlayViewController: UIViewController {
         super.viewDidLoad()
 
         preparePlayer()
-//        playSingleResource()
-        prepareResourceItem()
-        player.play(withItem: resourceItem)
+        playSingleResource()
+//        prepareResourceItem()
+//        player.play(withItem: resourceItem)
     }
 
     func preparePlayer() {
@@ -73,7 +73,6 @@ class VideoPlayViewController: UIViewController {
     func prepareResourceItem() {
         let resource0 = JFPlayerDefinitionItem(url: URL(string: "http://baobab.wdjcdn.com/1457162012752491010143.mp4")!, definitionName: "高清")
         let resource1 = JFPlayerDefinitionItem(url: URL(string: "http://baobab.wdjcdn.com/1457529788412_5918_854x480.mp4")!, definitionName: "标清")
-//        let resource1 = JFPlayerDefinitionItem(url: URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")!, definitionName: "标清")
         resourceItem = JFPlayerItem(title: "中国第一高楼", resources: [resource0, resource1], cover: "http://img.wdjimg.com/image/video/447f973848167ee5e44b67c8d4df9839_0_0.jpeg")
     }
     
