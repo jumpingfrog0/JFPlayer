@@ -78,9 +78,6 @@ class VRPlayerViewController: UIViewController {
     }
     
     func playResource() {
-//        let url = URL(string: "http://gslb.miaopai.com/stream/kPzSuadRd2ipEo82jk9~sA__.mp4")
-        //        let url = URL(string: "http://baobab.wdjcdn.com/14571455324031.mp4")
-        
         
         let resource0 = JFPlayerDefinitionItem(url: URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography", ofType: "mp4")!), definitionName: "高清")
         let resource1 = JFPlayerDefinitionItem(url: URL(fileURLWithPath: Bundle.main.path(forResource: "demo", ofType: "m4v")!), definitionName: "高清")
@@ -94,7 +91,7 @@ class VRPlayerViewController: UIViewController {
         
         let url = URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography", ofType: "mp4")!)
         player.episodes = episodes
-        player.playWithUrl(url, title: "至尊宝")
+        player.playWithUrl(url, title: "全景视频")
     }
     
     override func viewWillAppear(_ animated: Bool) {

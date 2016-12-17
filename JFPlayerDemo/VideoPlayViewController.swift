@@ -69,7 +69,8 @@ class VideoPlayViewController: UIViewController {
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
             make.height.equalTo(view.snp.width).multipliedBy(UIScreen.main.bounds.width/UIScreen.main.bounds.height)
-//            make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
+            // 宽高比也可以为 16:9
+            // make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
         }
         
         player.backClosure = { [unowned self] in
