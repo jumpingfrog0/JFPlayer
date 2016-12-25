@@ -198,3 +198,11 @@ let url = URL(fileURLWithPath: Bundle.main.path(forResource: "Aerial_photography
 player.episodes = episodes
 player.playWithUrl(url, title: "全景视频")
 ```
+
+### 效果图片
+
+![](http://jumpingfrog0-images.oss-cn-shenzhen.aliyuncs.com/jfplayer_brightness.jpg)
+
+![](http://jumpingfrog0-images.oss-cn-shenzhen.aliyuncs.com/jfplayer_volume.jpg)
+
+![](http://jumpingfrog0-images.oss-cn-shenzhen.aliyuncs.com/jfplayer_progress_slide.jpg)
