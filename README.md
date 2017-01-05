@@ -14,6 +14,12 @@ A library that mimics the mainstream video players writting in Swift, based on `
 - [x] Slide left or right the screen to adjust playback progress 
 - [x] Switch video definition
 
+### VR player
+- [x] Support switch normal/VR mode
+- [x] Support gestures up and down to drag video screen，gestures scale video screen
+- [x] Support head-up playback and pause
+- [x] The next playback menu is displayed after playback
+
 ## Requirements
 * iOS 8.0+
 * Xcode 8.1+

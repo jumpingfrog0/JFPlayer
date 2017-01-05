@@ -43,13 +43,7 @@ extension UIApplication {
         if jf_usesViewControllerBasedStatusBarAppearance() {
             sender.setNeedsStatusBarAppearanceUpdate()
         } else {
-            if #available(iOS 9, *) {
-                
-                debugPrint("setStatusBarHidden:withAnimation: is deprecated. Please use view-controller-based status bar appearance.")
-                
-            } else {
-                UIApplication.shared.setStatusBarHidden(hidden, with: animation)
-            }
+            UIApplication.shared.setStatusBarHidden(hidden, with: animation)
         }
     }
 }
