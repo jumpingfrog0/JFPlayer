@@ -152,7 +152,7 @@ class JFPlayer: UIView {
         playerLayer.videoItem = item
         playerLayer.videoUrl = item.resources.first?.videoUrl
         playerLayer.configurePlayer()
-        controlView.titleLabel.text = title
+        controlView.titleLabel.text = item.title
         controlView.prepareDefinitionView(withItems: item.resources)
         play()
     }

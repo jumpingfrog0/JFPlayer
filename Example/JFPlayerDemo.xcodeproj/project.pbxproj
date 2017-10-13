@@ -634,7 +634,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Donghong Huang (B7356A8P86)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Donghong Huang (B7356A8P86)";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -653,7 +654,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Donghong Huang (B7356A8P86)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Donghong Huang (B7356A8P86)";
 				DEVELOPMENT_TEAM = 9P25B7FGHC;
 				INFOPLIST_FILE = JFPlayerDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -661,7 +663,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kankan.JFPlayerDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "143c8aa3-3e77-4570-bfdb-50ab579fa984";
-				PROVISIONING_PROFILE_SPECIFIER = wild.adhoc;
+				PROVISIONING_PROFILE_SPECIFIER = wild.dev;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
